@@ -1,0 +1,199 @@
+---
+title: '**Compte rendu du tp_1:Resumés de données et visualisations** '
+author: "EL_Hadrami_N'DOYE"
+date: "13/10/2020"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+**Question_1** 
+
+importation de la base de donées
+```{r pressure, echo=TRUE}
+dataset <- read.csv(file="/home/ndoye/TPRSSD/TPSTAT/forestfires.csv")
+```
+
+**QUESTION_2:** 
+
+La base de donneés importée comporte plusieurs données erronées qui peuvent poser probleme pour l'analyse statistique.
+
+Dans les variables qualitatives (month et day) on constate que certains mois et jours sont ecrits de deux facons differentes. 
+
+**QUESTION_3:** 
+
+```{r,echo=TRUE}
+summary(dataset)
+```
+Apres avoir fait la commande summary on contate qu'il y'a des valeurs non renseignées dans la variable temp qui determine la temperature et celle de wind qui determine l'humidité.
+
+**Question_4:**
+
+```{r,echo=TRUE}
+library(tidyverse)
+# Creation de la matrice scaterplot
+data_frame <- data.frame(dataset$temp, dataset$RH, dataset$wind, dataset$rain, dataset$area)
+plot(data_frame, pch = 3, col = "blue", labels = c("temp", "RH", "wind", "rain", "area"), main = "Scatterplot")
+
+```
+
+Création des boxplots
+
+```{r,echo=TRUE}
+boxplot(dataset$temp,col="blue")
+```
+
+le boxplot de la variable temp indique qu'il y'a des valeurs aberrantes, ces valeurs sont des erreurs car ils sont tres eloigées de la zone bleu rectangulaire ou se trouve 50% des valeurs observées y compris la moyenne.
+
+```{r,echo=TRUE}
+boxplot(dataset$wind,col="blue")
+```
+
+le boxplot de la variable wind indique qu'il y'a une valeur aberrante qui est supposée comme une erreur car c'est une valeur extreme et tres eloignée de la moyenne, on trouve aussi une autre valeur aberrante qui est raisonnable car elle est tres proche du troisieme quartile ainsi que la moyenne.
+
+```{r,echo=TRUE}
+boxplot(dataset$rain)
+```
+  
+le boxplot de la variable rain indique qu'il y'a deux valeurs aberrantes raisonnable car elles sont toute proche de la moyenne et une autre valeur aberrante qui est supposée comme une erreur car elle est tres eloignéé de la moyenne.
+
+```{r,echo=TRUE}
+boxplot(dataset$area)
+```
+
+le boxplot de la variable area presente des valeurs aberrantes qui sont supposées comme des erreurs car elles ont tendance a s'eloignées de la moyenne ainsi le troisieme quartile.
+
+**Question_5**: **Nettoyage de la base de données**
+
+Dans la variable qualitative (month et day), le nom des jours et mois doivent etre affectés a un seul nom composé de trois lettres, on peut utliser un factor pour corriger cette anomalie.
+
+
+**etape_1** : Cretation de deux factor nommés month_factor et day_factor qui contient tous les mois et jour qui se trouve dans mon dataframe dataset.
+
+**etape_2** : Dans un factor la modification d'une variable peut se faire dans le levels, tout les mois et jours composés plus de trois lettres doivent etre modifiés (voir code ci-dessous).
+
+
+Correction:
+```{r,echo=TRUE}
+dataset_clean <- read.csv(file="/home/ndoye/TPRSSD/TPSTAT/forestfires.csv")
+month_vector<- dataset_clean$month
+month_factor <- factor(month_vector)
+levels(month_factor)[levels(month_factor)=="September"] <- "sep" 
+levels(month_factor)[levels(month_factor)=="April"] <- "apr"
+levels(month_factor)[levels(month_factor)=="July"] <- "jul" 
+dataset_clean$month = month_factor
+day_vector <- dataset_clean$day
+day_factor <- factor(day_vector)
+levels(day_factor)[levels(day_factor)=="Friday"] <- "fri"
+levels(day_factor)[levels(day_factor)=="Thursday"] <- "thu"
+levels(day_factor)[levels(day_factor)=="Wednesday"] <- "wed"
+dataset_clean$day <- day_factor
+```
+
+Les valeurs non renseignées qui se trouve  dans les variables quantitatives temp qui detemine la temperature et celle de wind qui determine la vitesse du vent doivent etre remplacées par la moyenne pour avoir une meilleure aproximation et eviter les valeurs aberrantes.
+
+
+```{r}
+subset1 <- subset(dataset_clean,dataset_clean$month =="sep")$temp
+mean_subset1 <- mean(subset1,na.rm = TRUE)
+dataset_clean$temp[[20]] <- mean_subset1
+subset2 <- subset(dataset_clean,dataset_clean$month=="sep")$wind
+mean_subset2 <- mean(subset2,na.rm = TRUE)
+dataset_clean$wind[[24]] <- mean_subset2 
+summary(dataset_clean)
+```
+Une analyse statistique entre les differentes variables:
+
+```{r,echo=TRUE}
+library(quantable)
+library(tidyverse)
+library(corrplot)
+library(car)
+temp <- dataset_clean$temp
+RH <- dataset_clean$RH
+wind <- dataset_clean$wind
+rain <- dataset_clean$rain
+area <- dataset_clean$area
+df <- data.frame(temp, RH, wind, rain,area)
+corr <- cor(df,method= "pearson")
+corrplot(corr, type="upper", order="hclust", tl.col="black", tl.srt=45)
+```
+
+La variable corr est une matrice de correlation permettant d'evaluer la dependance entre les differentes variables, la fonction corrplot permet de visualiser la matrice de correlation.
+Les correlation positives sont affichées en bleu et les correlations negatives sont affichées en rouge, l'intensité de la  couleur et la taille des cercles sont proportionnelles.
+
+Observation: le correlogramme montre qu'il y'a
+
+```{r,echo=TRUE}
+#pairs(df,lower.panel = panel.smooth,upper.panel = panel.cor, pch = 3, col = "blue", labels = c("temp", "RH", "wind", "rain", "area"), main = "Scatterplot")
+reg1 <- lm(temp~RH)
+ggplot(data = dataset_clean) + 
+  geom_point(mapping = aes(x = temp, y = RH),colour="blue") +
+  geom_smooth(mapping = aes(x = temp, y = RH),se = FALSE,colour="red",fill="red",method = lm)
+
+ggplot(data = dataset_clean) + 
+  geom_point(mapping = aes(x =RH , y = rain),colour="blue") +
+  geom_smooth(mapping = aes(x = RH, y = rain),se = FALSE,colour="red",fill="red",method = lm)
+ggplot(data = dataset_clean) + 
+  geom_point(mapping = aes(x = RH, y = wind),colour="blue") +
+  geom_smooth(mapping = aes(x = RH, y = wind),se = FALSE,colour="red",fill="red",method = lm)
+ggplot(data = dataset_clean) + 
+  geom_point(mapping = aes(x = RH, y = area),colour="blue") +
+  geom_smooth(mapping = aes(x = RH, y = area),se = FALSE,colour="red",fill="red",method = lm)
+```
+
+**Exercice_2**
+Question_1
+```{r,echo=TRUE}
+library(tidyverse)
+datasetT <- read.csv2(file="/home/ndoye/TPRSSD/TPSTAT/titanic.csv")
+```
+**Question_2**
+```{r}
+summary(datasetT)
+```
+**Question_3**
+      
+Conversion de la variable quantitative  age en chaine de caractere avant d'etudier le lien entre les differentes variables
+
+```{r,echo=TRUE}
+age_double <- as.double(datasetT$age)
+datasetT$age <- age_double
+summary(datasetT)
+```
+
+- Etudions le lien entre la classe du passager trouvant dans la variable pclass et leur statu de survie
+  
+supposons que pclass est une variable quantitative discrete qui prend trois valeurs {1,2,3} et  survived une variable qualitative qui determine la statu de survie des individues 
+
+```{r,echo=TRUE}
+classep <- datasetT$pclass
+survi <- datasetT$survived
+table(classep,survi)
+df <- data.frame(classep,survi)
+ggplot(data = datasetT) + 
+  geom_bar(mapping = aes(x=classep,fill=survi))
+```
+
+Cette courbe montre que parmis les 284 passagers qui se trouve dans la classe 1 du bateau, 103 personnes n'ont pas survecu et 181 personnes ont survecu lors du naufrage, ce qui montre qu'il y'a eu plus des survivants que des non survivants 
+
+Etude du lien entre le sexe du passager et leur statu de survi
+
+```{r,echo=TRUE}
+sexe <- datasetT$gender
+survi <- datasetT$survived
+table(sexe,survi)
+df <- data.frame(sexe,survi)
+ggplot(data = df) + 
+  geom_bar(mapping = aes(x=sexe,fill=survi))
+```
+Etude du lien entre l'age du passager et leur statu de survi
+
+```{r,echo=TRUE}
+agep <- datasetT$age
+survi <- datasetT$survived
+table(agep,survi)
+df <- data.frame(agep,survi)
+ggplot(data = df) +
+geom_histogram(mapping = aes(x=agep,fill=survi))
+```
