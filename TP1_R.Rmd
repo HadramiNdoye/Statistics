@@ -133,26 +133,42 @@ Observation:
 
 - le correlogramme montre que RH est en correlation negative avec le temp, la taille du cercle montrant les correlations entre RH avec area et RH avec wind sont tres reduites ce qui montre une faible correlation.
 
-- le correlogramme montre aussi une faible correlation positive entre les variables RH et rain,rain et temp puis temp et area
+- le correlogramme montre aussi une faible correlation positive entre les variables RH et rain,rain et temp puis temp et area.
 
 
 ```{r,echo=TRUE}
-#pairs(df,lower.panel = panel.smooth,upper.panel = panel.cor, pch = 3, col = "blue", labels = c("temp", "RH", "wind", "rain", "area"), main = "Scatterplot")
 reg1 <- lm(temp~RH)
 ggplot(data = dataset_clean) + 
   geom_point(mapping = aes(x = temp, y = RH),colour="blue") +
   geom_smooth(mapping = aes(x = temp, y = RH),se = FALSE,colour="red",fill="red",method = lm)
-
-ggplot(data = dataset_clean) + 
-  geom_point(mapping = aes(x =RH , y = rain),colour="blue") +
-  geom_smooth(mapping = aes(x = RH, y = rain),se = FALSE,colour="red",fill="red",method = lm)
-ggplot(data = dataset_clean) + 
-  geom_point(mapping = aes(x = RH, y = wind),colour="blue") +
-  geom_smooth(mapping = aes(x = RH, y = wind),se = FALSE,colour="red",fill="red",method = lm)
-ggplot(data = dataset_clean) + 
-  geom_point(mapping = aes(x = RH, y = area),colour="blue") +
-  geom_smooth(mapping = aes(x = RH, y = area),se = FALSE,colour="red",fill="red",method = lm)
 ```
+
+Cette regression lineaire montre qu'il y'a une dependance entre la temperature et l'humidité ce qui veut dire que plus que la temperature est basse plus que l'humidité est elevée et l'humidité devient faible lorsque la temperature est élevée.
+
+
+```{r,echo=TRUE}
+ggplot(data = dataset_clean) + 
+  geom_point(mapping = aes(x =temp , y = rain),colour="blue") +
+  geom_smooth(mapping = aes(x = temp, y = rain),se = FALSE,colour="red",fill="red",method = lm)
+```
+
+```{r,echo=TRUE}
+ggplot(data = dataset_clean) + 
+  geom_point(mapping = aes(x = temp, y = wind),colour="blue") +
+  geom_smooth(mapping = aes(x = temp, y = wind),se = FALSE,colour="red",fill="red",method = lm)
+```
+
+les deux regressions lineaires montrent qu'il y'a une faible dependance entre la temperature et la pluie, puis la temperature avec la vitesse du vent, cela permet de dire que la temperature n'est pas le seul facteur qui impacte la pluie et le vent.  
+
+
+
+```{r,echo=TRUE}
+ggplot(data = dataset_clean) + 
+  geom_point(mapping = aes(x = temp, y = area),colour="blue") +
+  geom_smooth(mapping = aes(x = temp, y = area),se = FALSE,colour="red",fill="red",method = lm)
+```
+
+Cette regression lineaire simple montre que la temperature a un impacte sur les petites surfaces de la foret brulées, la surface de la foret brulée augmente lorsque la temperature devient de plus en plus grande.
 
 **Exercice_2**
 
