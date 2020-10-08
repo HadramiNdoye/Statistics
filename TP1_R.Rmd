@@ -136,6 +136,7 @@ Observation:
 - le correlogramme montre aussi une faible correlation positive entre les variables RH et rain,rain et temp puis temp et area.
 
 
+  
 ```{r,echo=TRUE}
 reg1 <- lm(temp~RH)
 ggplot(data = dataset_clean) + 
@@ -143,9 +144,10 @@ ggplot(data = dataset_clean) +
   geom_smooth(mapping = aes(x = temp, y = RH),se = FALSE,colour="red",fill="red",method = lm)
 ```
 
+
 Cette regression lineaire montre qu'il y'a une dependance entre la temperature et l'humidité ce qui veut dire que plus que la temperature est basse plus que l'humidité est elevée et l'humidité devient faible lorsque la temperature est élevée.
 
-
+  
 ```{r,echo=TRUE}
 ggplot(data = dataset_clean) + 
   geom_point(mapping = aes(x =temp , y = rain),colour="blue") +
@@ -158,7 +160,7 @@ ggplot(data = dataset_clean) +
   geom_smooth(mapping = aes(x = temp, y = wind),se = FALSE,colour="red",fill="red",method = lm)
 ```
 
-les deux regressions lineaires montrent qu'il y'a une faible dependance entre la temperature et la pluie, puis la temperature avec la vitesse du vent, cela permet de dire que la temperature n'est pas le seul facteur qui impacte la pluie et le vent.  
+les deux regressions lineaires montrent qu'il y'a une faible dependance entre la temperature et la pluie, puis la temperature et la vitesse du vent, cela permet de dire que la temperature n'est pas le seul facteur qui impacte la pluie et le vent.  
 
 
 
@@ -184,8 +186,9 @@ summary(datasetT)
 ```
 
 **Question_3**
-      
-Conversion de la variable quantitative  age en chaine de caractere avant d'etudier le lien entre les differentes variables
+
+  
+La variable age est supposée etre une variable quantitative donc doit etre de type reel, pour se faire il est necessaire de convertir la variable age en double.
 
 ```{r,echo=TRUE}
 age_double <- as.double(datasetT$age)
