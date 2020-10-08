@@ -92,16 +92,23 @@ dataset_clean$day <- day_factor
 
 Les valeurs non renseignées qui se trouve  dans les variables quantitatives temp qui detemine la temperature et celle de wind qui determine la vitesse du vent doivent etre remplacées par la moyenne pour avoir une meilleure aproximation et eviter les valeurs aberrantes.
 
+Les deux valeurs non renseignées notée NA se trouvent dans les deux variables temp et wind
+dans le mois de septembre notée (sept), dans ce cas il est necessaire d'utiliser un dplyer pour extraire uniquement les données dans le mois de septembre
+
 
 ```{r}
-subset1 <- subset(dataset_clean,dataset_clean$month =="sep")$temp
+# subset1 contient toutes les temperatures du mois de septempbre
+subset1 <- subset(dataset_clean,dataset_clean$month =="sep")$temp 
 mean_subset1 <- mean(subset1,na.rm = TRUE)
 dataset_clean$temp[[20]] <- mean_subset1
+# subset2 contient toutes les vitesses du vent dans le mois de septembre
 subset2 <- subset(dataset_clean,dataset_clean$month=="sep")$wind
 mean_subset2 <- mean(subset2,na.rm = TRUE)
 dataset_clean$wind[[24]] <- mean_subset2 
 summary(dataset_clean)
 ```
+
+
 Une analyse statistique entre les differentes variables:
 
 ```{r,echo=TRUE}
@@ -122,7 +129,12 @@ corrplot(corr, type="upper", order="hclust", tl.col="black", tl.srt=45)
 La variable corr est une matrice de correlation permettant d'evaluer la dependance entre les differentes variables, la fonction corrplot permet de visualiser la matrice de correlation.
 Les correlation positives sont affichées en bleu et les correlations negatives sont affichées en rouge, l'intensité de la  couleur et la taille des cercles sont proportionnelles.
 
-Observation: le correlogramme montre qu'il y'a
+Observation: 
+
+- le correlogramme montre que RH est en correlation negative avec le temp, la taille du cercle montrant les correlations entre RH avec area et RH avec wind sont tres reduites ce qui montre une faible correlation.
+
+- le correlogramme montre aussi une faible correlation positive entre les variables RH et rain,rain et temp puis temp et area
+
 
 ```{r,echo=TRUE}
 #pairs(df,lower.panel = panel.smooth,upper.panel = panel.cor, pch = 3, col = "blue", labels = c("temp", "RH", "wind", "rain", "area"), main = "Scatterplot")
@@ -143,15 +155,18 @@ ggplot(data = dataset_clean) +
 ```
 
 **Exercice_2**
+
 Question_1
 ```{r,echo=TRUE}
 library(tidyverse)
 datasetT <- read.csv2(file="/home/ndoye/TPRSSD/TPSTAT/titanic.csv")
 ```
+
 **Question_2**
 ```{r}
 summary(datasetT)
 ```
+
 **Question_3**
       
 Conversion de la variable quantitative  age en chaine de caractere avant d'etudier le lien entre les differentes variables
@@ -187,6 +202,7 @@ df <- data.frame(sexe,survi)
 ggplot(data = df) + 
   geom_bar(mapping = aes(x=sexe,fill=survi))
 ```
+
 Etude du lien entre l'age du passager et leur statu de survi
 
 ```{r,echo=TRUE}
