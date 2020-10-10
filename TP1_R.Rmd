@@ -33,32 +33,32 @@ Apres avoir fait la commande summary on contate qu'il y'a des valeurs non rensei
 library(tidyverse)
 # Creation de la matrice scaterplot
 data_frame <- data.frame(dataset$temp, dataset$RH, dataset$wind, dataset$rain, dataset$area)
-plot(data_frame, pch = 3, col = "blue", labels = c("temp", "RH", "wind", "rain", "area"), main = "Scatterplot")
+pairs(data_frame, pch = 3, col = "blue", labels = c("temp", "RH", "wind", "rain", "area"), main = "Scatterplot")
 
 ```
 
 Création des boxplots
 
 ```{r,echo=TRUE}
-boxplot(dataset$temp,col="blue")
+boxplot(dataset$temp,col="blue",main="boxplot pour la variable temperature")
 ```
 
 le boxplot de la variable temp indique qu'il y'a des valeurs aberrantes, ces valeurs sont des erreurs car ils sont tres eloigées de la zone bleu rectangulaire ou se trouve 50% des valeurs observées y compris la moyenne.
 
 ```{r,echo=TRUE}
-boxplot(dataset$wind,col="blue")
+boxplot(dataset$wind,col="blue",main="boxplot pour la variable wind")
 ```
 
 le boxplot de la variable wind indique qu'il y'a une valeur aberrante qui est supposée comme une erreur car c'est une valeur extreme et tres eloignée de la moyenne, on trouve aussi une autre valeur aberrante qui est raisonnable car elle est tres proche du troisieme quartile ainsi que la moyenne.
 
 ```{r,echo=TRUE}
-boxplot(dataset$rain)
+boxplot(dataset$rain,main="boxplot pour la variable rain")
 ```
   
 le boxplot de la variable rain indique qu'il y'a deux valeurs aberrantes raisonnable car elles sont toute proche de la moyenne et une autre valeur aberrante qui est supposée comme une erreur car elle est tres eloignéé de la moyenne.
 
 ```{r,echo=TRUE}
-boxplot(dataset$area)
+boxplot(dataset$area,main="boxplot pour la variable area")
 ```
 
 le boxplot de la variable area presente des valeurs aberrantes qui sont supposées comme des erreurs car elles ont tendance a s'eloignées de la moyenne ainsi le troisieme quartile.
@@ -202,33 +202,46 @@ supposons que pclass est une variable quantitative discrete qui prend trois vale
 
 ```{r,echo=TRUE}
 classep <- datasetT$pclass
-survi <- datasetT$survived
-table(classep,survi)
-df <- data.frame(classep,survi)
-ggplot(data = datasetT) + 
-  geom_bar(mapping = aes(x=classep,fill=survi))
+survécu <- datasetT$survived
+t1 <- table(classep,survécu)
+percent1 <- proportions(t1,"classep")
+dfp1 <- data.frame(percent1)
+dfp1$labelpos <- ifelse(dfp1$survécu=="yes",dfp1$Freq/2,1 - dfp1$Freq/2)
+g <- ggplot(data = dfp1) +
+  geom_bar(stat="identity",mapping = aes(x=classep,y=Freq,fill=survécu)) + 
+  geom_text(aes(x=classep,y=labelpos,label=paste0(round(Freq*100,2),"%"))) +  
+  ggtitle("Classe des passagers et leur statut de survie")
+g + theme (plot.title = element_text(size=11,face="bold",hjust = 0.5))
 ```
 
-Cette courbe montre que parmis les 284 passagers qui se trouve dans la classe 1 du bateau, 103 personnes n'ont pas survecu et 181 personnes ont survecu lors du naufrage, ce qui montre qu'il y'a eu plus des survivants que des non survivants 
 
 Etude du lien entre le sexe du passager et leur statu de survi
 
 ```{r,echo=TRUE}
 sexe <- datasetT$gender
-survi <- datasetT$survived
-table(sexe,survi)
-df <- data.frame(sexe,survi)
-ggplot(data = df) + 
-  geom_bar(mapping = aes(x=sexe,fill=survi))
+survécu <- datasetT$survived
+t2 <- table(sexe,survécu)
+percent2 <- proportions(t2,"sexe")
+dfp2 <- data.frame(percent2)
+dfp2$labelpos <- ifelse(dfp2$survécu=="yes",dfp2$Freq/2,1-dfp2$Freq/2)
+g <- ggplot(data = dfp2) + 
+  geom_bar(stat="identity",mapping = aes(x=sexe,y=Freq,fill=survécu)) + 
+  geom_text(aes(x=sexe,y=labelpos,label=paste0(round(Freq*100,2),"%")))+
+  ggtitle("Sexe des passagers et leur statut de survie") 
+  g + theme (plot.title = element_text(size=11,face="bold",hjust = 0.5))
 ```
+
+le barplot montre que 292 individus de categorie feminin ont survecu 
 
 Etude du lien entre l'age du passager et leur statu de survi
 
 ```{r,echo=TRUE}
 agep <- datasetT$age
 survi <- datasetT$survived
-table(agep,survi)
-df <- data.frame(agep,survi)
-ggplot(data = df) +
-geom_histogram(mapping = aes(x=agep,fill=survi))
+dfp3 <- data.frame(agep,survi)
+g <- ggplot(data=dfp3, mapping=aes(x=agep, colour=survi, fill=survi)) + 
+geom_histogram(aes(x=agep,y=..density..), alpha=0.5,position="identity")+
+geom_density(alpha=.2) +
+ggtitle("l'age des passagers et leur statut de survie")
+g + theme (plot.title = element_text(size=11,face="bold",hjust = 0.5))
 ```
