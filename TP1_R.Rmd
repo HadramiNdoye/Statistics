@@ -214,6 +214,11 @@ g <- ggplot(data = dfp1) +
 g + theme (plot.title = element_text(size=11,face="bold",hjust = 0.5))
 ```
 
+Le barplot indique que dans la classe 1 des passagers 63.73% des individues ont survécus lors du nauffrage et 36.27% n'ont pas survécus, ce qui montre qu'il y'a eu plus des survécus que des non survécus.
+
+Dans la la classe 2 des passagers le barplot indique que 44.06% des individues ont survécu et 55.94% n'ont pas survécus, dans la classe 3 des passagers 26.15% des passagers ont survécus et 73.85% des passagers n'ont pas survécus. 
+Ce qui montre qu'il y'a plus des non survécus que des survécus dans classe 2 et 3 des passagers.
+
 
 Etude du lien entre le sexe du passager et leur statu de survi
 
@@ -231,7 +236,7 @@ g <- ggplot(data = dfp2) +
   g + theme (plot.title = element_text(size=11,face="bold",hjust = 0.5))
 ```
 
-le barplot montre que 292 individus de categorie feminin ont survecu 
+le barplot
 
 Etude du lien entre l'age du passager et leur statu de survi
 
