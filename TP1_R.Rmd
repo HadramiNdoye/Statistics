@@ -4,71 +4,87 @@ author: "EL_Hadrami_N'DOYE"
 date: "13/10/2020"
 output:
   pdf_document: default
-  html_document:
+  html_document:  
     df_print: paged
 ---
-**Question_1** 
 
-importation de la base de donées
+**Les packages utlisés**
+```{r}
+library(tidyverse)
+library(corrplot)
+library(cowplot)
+```
+**Question_1** Importation de la base de données
 ```{r pressure, echo=TRUE}
 dataset <- read.csv(file="/home/ndoye/TPRSSD/TPSTAT/forestfires.csv")
 ```
 
 **QUESTION_2:** 
 
-La base de donneés importée comporte plusieurs données erronées qui peuvent poser probleme pour l'analyse statistique.
+La base de donneés importée comporte plusieurs données erronées qui peuvent poser probleme sur l'analyse statistique.
 
-Dans les variables qualitatives (month et day) on constate que certains mois et jours sont ecrits de deux facons differentes. 
+Dans les variables qualitatives (month et day) on constate que certains mois et jours sont écrits de deux façons différentes. 
 
 **QUESTION_3:** 
 
 ```{r,echo=TRUE}
 summary(dataset)
 ```
-Apres avoir fait la commande summary on contate qu'il y'a des valeurs non renseignées dans la variable temp qui determine la temperature et celle de wind qui determine l'humidité.
+Après avoir fait la commande summary on constate qu'il y a des valeurs non renseignées dans les variables temp et wind qui détermine respectivement la température et l’humidité
 
 **Question_4:**
 
 ```{r,echo=TRUE}
-library(tidyverse)
+
 # Creation de la matrice scaterplot
 data_frame <- data.frame(dataset$temp, dataset$RH, dataset$wind, dataset$rain, dataset$area)
 pairs(data_frame, pch = 3, col = "blue", labels = c("temp", "RH", "wind", "rain", "area"), main = "Scatterplot")
 
 ```
 
-Création des boxplots
+Créations des boxplots
 
-```{r,echo=TRUE}
-boxplot(dataset$temp,col="blue",main="boxplot pour la variable temperature")
+```{r}
+b1 <- ggplot(data=dataset,aes(y=temp)) +
+geom_boxplot(outlier.color = "blue",outlier.shape=8,outlier.size=1,colour="green") + 
+  ggtitle("boxplot pour la température")
+
+b2 <- ggplot(data=dataset,aes(y=RH)) +
+geom_boxplot(outlier.color = "blue",outlier.shape=8,outlier.size=1,colour="red") +
+ggtitle("boxplot pour l'humidité")
+b3 <- ggplot(data=dataset,aes(y=wind)) +
+geom_boxplot(outlier.color = "blue",outlier.shape=8,outlier.size=1) +
+ggtitle("boxplot pour la vitésse du vent")
+b4 <- ggplot(data=dataset,aes(y=rain)) +
+geom_boxplot(outlier.color = "blue",outlier.shape=8,outlier.size=1) +
+ggtitle("boxplot pour la pluviométrie")
+b5 <- ggplot(data=dataset,aes(y=area)) +
+geom_boxplot(outlier.color = "blue",outlier.shape=8,outlier.size=1) +
+ggtitle("boxplot pour les surface brulées")
+plot_grid(b1, b2, b3, b4, b5,ncol = 2, nrow = 3)
 ```
 
-le boxplot de la variable temp indique qu'il y'a des valeurs aberrantes, ces valeurs sont des erreurs car ils sont tres eloigées de la zone bleu rectangulaire ou se trouve 50% des valeurs observées y compris la moyenne.
-
-```{r,echo=TRUE}
-boxplot(dataset$wind,col="blue",main="boxplot pour la variable wind")
-```
-
-le boxplot de la variable wind indique qu'il y'a une valeur aberrante qui est supposée comme une erreur car c'est une valeur extreme et tres eloignée de la moyenne, on trouve aussi une autre valeur aberrante qui est raisonnable car elle est tres proche du troisieme quartile ainsi que la moyenne.
-
-```{r,echo=TRUE}
-boxplot(dataset$rain,main="boxplot pour la variable rain")
-```
-  
-le boxplot de la variable rain indique qu'il y'a deux valeurs aberrantes raisonnable car elles sont toute proche de la moyenne et une autre valeur aberrante qui est supposée comme une erreur car elle est tres eloignéé de la moyenne.
-
-```{r,echo=TRUE}
-boxplot(dataset$area,main="boxplot pour la variable area")
-```
-
-le boxplot de la variable area presente des valeurs aberrantes qui sont supposées comme des erreurs car elles ont tendance a s'eloignées de la moyenne ainsi le troisieme quartile.
+- le boxplot de la variable temp indique qu’il y a des valeurs aberrantes, ces valeurs sont des erreurs car
+ils sont très éloignées de la zone verte rectangulaire ou se trouve 50% des valeurs observées y compris la
+moyenne.
+-  le boxplot de la variable RH indique que 50% des valeurs observées se trouve dans la zone rouge
+rectangulaire y compris la moyenne, dans ce boxplot les valeurs aberrantes sont supposées comme des
+erreurs car ce sont des valeurs extrêmes qui sont tres éloignées de la moyenne.
+- le boxplot de la variable wind indique qu’il y a une valeur aberrante qui est supposée comme une erreur
+car c’est une valeur extrême qui très éloignée de la moyenne, on trouve aussi une autre valeur aberrante
+qui est raisonnable car elle est très proche du troisième quartile ainsi que la moyenne.
+ - le boxplot de la variable rain indique qu’il y a deux valeurs aberrantes raisonnable car elles sont trés
+proche de la moyenne et une autre valeur aberrante qui est supposée comme une erreur car elle est trés
+éloignée de la moyenne.
+- le boxplot de la variable area presente des valeurs aberrantes qui sont supposées comme des erreurs car
+elles ont tendance a s’eloignées de la moyenne ainsi le troisieme quartile.
 
 **Question_5**: **Nettoyage de la base de données**
 
 Dans la variable qualitative (month et day), le nom des jours et mois doivent etre affectés a un seul nom composé de trois lettres, on peut utliser un factor pour corriger cette anomalie.
 
 
-**etape_1** : Cretation de deux factor nommés month_factor et day_factor qui contient tous les mois et jour qui se trouve dans mon dataframe dataset.
+**etape_1** : Création de deux factor nommés month_factor et day_factor qui contient tous les mois et jour qui se trouve dans mon dataframe dataset.
 
 **etape_2** : Dans un factor la modification d'une variable peut se faire dans le levels, tout les mois et jours composés plus de trois lettres doivent etre modifiés (voir code ci-dessous).
 
@@ -92,8 +108,7 @@ dataset_clean$day <- day_factor
 
 Les valeurs non renseignées qui se trouve  dans les variables quantitatives temp qui detemine la temperature et celle de wind qui determine la vitesse du vent doivent etre remplacées par la moyenne pour avoir une meilleure aproximation et eviter les valeurs aberrantes.
 
-Les deux valeurs non renseignées notée NA se trouvent dans les deux variables temp et wind
-dans le mois de septembre notée (sept), dans ce cas il est necessaire d'utiliser un dplyer pour extraire uniquement les données dans le mois de septembre
+Les deux valeurs non renseignées notée NA se trouvent dans les deux variables temp et wind sur la période du mois de septembre notée (sept), dans ce cas il est necessaire d'utiliser un dplyer pour extraire uniquement les données dans le mois de septembre
 
 
 ```{r}
@@ -112,10 +127,8 @@ summary(dataset_clean)
 Une analyse statistique entre les differentes variables:
 
 ```{r,echo=TRUE}
-library(quantable)
 library(tidyverse)
 library(corrplot)
-library(car)
 temp <- dataset_clean$temp
 RH <- dataset_clean$RH
 wind <- dataset_clean$wind
@@ -138,39 +151,31 @@ Observation:
 
   
 ```{r,echo=TRUE}
-reg1 <- lm(temp~RH)
-ggplot(data = dataset_clean) + 
+g1 <- ggplot(data = dataset_clean) + 
   geom_point(mapping = aes(x = temp, y = RH),colour="blue") +
-  geom_smooth(mapping = aes(x = temp, y = RH),se = FALSE,colour="red",fill="red",method = lm)
-```
-
-
-Cette regression lineaire montre qu'il y'a une dependance entre la temperature et l'humidité ce qui veut dire que plus que la temperature est basse plus que l'humidité est elevée et l'humidité devient faible lorsque la temperature est élevée.
-
-  
-```{r,echo=TRUE}
-ggplot(data = dataset_clean) + 
+  geom_smooth(mapping = aes(x = temp, y = RH),se = FALSE,colour="red",fill="red",method = lm) +
+  ggtitle("regression lineaire(RH~temp)")
+g2 <- ggplot(data = dataset_clean) + 
   geom_point(mapping = aes(x =temp , y = rain),colour="blue") +
-  geom_smooth(mapping = aes(x = temp, y = rain),se = FALSE,colour="red",fill="red",method = lm)
-```
-
-```{r,echo=TRUE}
-ggplot(data = dataset_clean) + 
-  geom_point(mapping = aes(x = temp, y = wind),colour="blue") +
-  geom_smooth(mapping = aes(x = temp, y = wind),se = FALSE,colour="red",fill="red",method = lm)
-```
-
-les deux regressions lineaires montrent qu'il y'a une faible dependance entre la temperature et la pluie, puis la temperature et la vitesse du vent, cela permet de dire que la temperature n'est pas le seul facteur qui impacte la pluie et le vent.  
-
-
-
-```{r,echo=TRUE}
-ggplot(data = dataset_clean) + 
+  geom_smooth(mapping = aes(x = temp, y = rain),se = FALSE,colour="red",fill="red",method = lm) + 
+  ggtitle("regression lineaire(rain~temp)")
+g3 <- ggplot(data = dataset_clean) + 
+  geom_point(mapping = aes(x =temp , y = wind),colour="blue") +
+  geom_smooth(mapping = aes(x = temp, y = rain),se = FALSE,colour="red",fill="red",method = lm) + 
+  ggtitle("regression lineaire(wind~temp)")
+g4 <- ggplot(data = dataset_clean) + 
   geom_point(mapping = aes(x = temp, y = area),colour="blue") +
-  geom_smooth(mapping = aes(x = temp, y = area),se = FALSE,colour="red",fill="red",method = lm)
+  geom_smooth(mapping = aes(x = temp, y = area),se = FALSE,colour="red",fill="red",method = lm) + 
+  ggtitle("regression lineaire(area~temp)")
+plot_grid(g1, g2,g3,g4,ncol = 2, nrow = 2,label_size = 1.5)
 ```
 
-Cette regression lineaire simple montre que la temperature a un impacte sur les petites surfaces de la foret brulées, la surface de la foret brulée augmente lorsque la temperature devient de plus en plus grande.
+
+- La courbe 1 de la regression lineaire montre qu'il y'a une dependance entre la temperature et l'humidité ce qui veut dire que plus que la temperature est basse plus que l'humidité est elevée et l'humidité devient faible lorsque la temperature est élevée.
+
+- La courbe 2 et 3 de la regression lineaire montre qu'elle y'a une faible dependance entre la temperature et la pluie, puis la temperature et la vitesse du vent, cela permet de dire que la temperature n'est pas la seule facteur qui impacte la pluie et le vent.  
+
+- La courbe 4 de la regression lineaire montre que la temperature a un impacte sur les petites surfaces de la foret brulées, la surface de la foret brulée augmente lorsque la temperature devient de plus en plus grande.
 
 **Exercice_2**
 
@@ -187,7 +192,6 @@ summary(datasetT)
 
 **Question_3**
 
-  
 La variable age est supposée etre une variable quantitative donc doit etre de type reel, pour se faire il est necessaire de convertir la variable age en double.
 
 ```{r,echo=TRUE}
@@ -195,8 +199,7 @@ age_double <- as.double(datasetT$age)
 datasetT$age <- age_double
 summary(datasetT)
 ```
-
-- Etudions le lien entre la classe du passager trouvant dans la variable pclass et leur statu de survie
+**Question_4**
   
 supposons que pclass est une variable quantitative discrete qui prend trois valeurs {1,2,3} et  survived une variable qualitative qui determine la statu de survie des individues 
 
@@ -219,8 +222,7 @@ Le barplot indique que dans la classe 1 des passagers 63.73% des individues ont 
 Dans la la classe 2 des passagers le barplot indique que 44.06% des individues ont survécu et 55.94% n'ont pas survécus, dans la classe 3 des passagers 26.15% des passagers ont survécus et 73.85% des passagers n'ont pas survécus. 
 Ce qui montre qu'il y'a plus des non survécus que des survécus dans classe 2 et 3 des passagers.
 
-
-Etude du lien entre le sexe du passager et leur statu de survi
+**Question_5**
 
 ```{r,echo=TRUE}
 sexe <- datasetT$gender
@@ -236,9 +238,11 @@ g <- ggplot(data = dfp2) +
   g + theme (plot.title = element_text(size=11,face="bold",hjust = 0.5))
 ```
 
-le barplot
 
-Etude du lien entre l'age du passager et leur statu de survi
+Le barplot indique que lors du nauffrage 75.26% de la population feminine a survécus et 24.74% n'ont pas survécus, on compte aussi 20.52% de la population masculine qui a  survécus et 79.48% qui n'ont pas survécus
+Ce qui montre que la population feminine a plus survécu que la population masculine.
+
+**Question_6**
 
 ```{r,echo=TRUE}
 agep <- datasetT$age
@@ -250,3 +254,5 @@ geom_density(alpha=.2) +
 ggtitle("l'age des passagers et leur statut de survie")
 g + theme (plot.title = element_text(size=11,face="bold",hjust = 0.5))
 ```
+
+La courbe montre que la statu de survi des passagers varie en fontion de leurs ages
