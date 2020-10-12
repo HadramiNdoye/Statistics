@@ -1,7 +1,7 @@
 ---
-title: '**Compte rendu du tp_1:Resumés de données et visualisations** '
-author: "EL_Hadrami_N'DOYE"
-date: "13/10/2020"
+title: '**TP_STATISTIQUE: Résumés de données et visualisation** '
+author: "**EL_Hadrami_N'DOYE**"
+date: '`r format(Sys.Date(),"%d/%B/%Y")`'
 output:
   pdf_document: default
   html_document:  
@@ -19,13 +19,13 @@ library(cowplot)
 dataset <- read.csv(file="/home/ndoye/TPRSSD/TPSTAT/forestfires.csv")
 ```
 
-**QUESTION_2:** 
+**Question_2:** 
 
 La base de donneés importée comporte plusieurs données erronées qui peuvent poser probleme sur l'analyse statistique.
 
 Dans les variables qualitatives (month et day) on constate que certains mois et jours sont écrits de deux façons différentes. 
 
-**QUESTION_3:** 
+**Question_3:** 
 
 ```{r,echo=TRUE}
 summary(dataset)
@@ -38,11 +38,11 @@ Après avoir fait la commande summary on constate qu'il y a des valeurs non rens
 
 # Creation de la matrice scaterplot
 data_frame <- data.frame(dataset$temp, dataset$RH, dataset$wind, dataset$rain, dataset$area)
-pairs(data_frame, pch = 3, col = "blue", labels = c("temp", "RH", "wind", "rain", "area"), main = "Scatterplot")
-
+pairs(data_frame, pch = 3, col = "blue", labels = c("temp", "RH", "wind", "rain", "area"),main = "nuages de points")
 ```
+La matrice de scatterplot construit un nuage de points pour chaque variable numérique, sur chaque variable on observe des valeurs aberrantes.
 
-Créations des boxplots
+**Créations des boxplots**
 
 ```{r}
 b1 <- ggplot(data=dataset,aes(y=temp)) +
@@ -108,7 +108,7 @@ dataset_clean$day <- day_factor
 
 Les valeurs non renseignées qui se trouve  dans les variables quantitatives temp qui detemine la temperature et celle de wind qui determine la vitesse du vent doivent etre remplacées par la moyenne pour avoir une meilleure aproximation et eviter les valeurs aberrantes.
 
-Les deux valeurs non renseignées notée NA se trouvent dans les deux variables temp et wind sur la période du mois de septembre notée (sept), dans ce cas il est necessaire d'utiliser un dplyer pour extraire uniquement les données dans le mois de septembre
+Les deux valeurs non renseignées notée NA se trouvent dans les deux variables temp et wind sur la période du mois de septembre notée (sept), pour pouvoir calculer la moyenne des deux variables sur cette période, il est nécessaire d'utiliser un dplyer(subset) pour extraire uniquement les données dans le mois de septembre.
 
 
 ```{r}
@@ -127,8 +127,6 @@ summary(dataset_clean)
 Une analyse statistique entre les differentes variables:
 
 ```{r,echo=TRUE}
-library(tidyverse)
-library(corrplot)
 temp <- dataset_clean$temp
 RH <- dataset_clean$RH
 wind <- dataset_clean$wind
@@ -139,15 +137,14 @@ corr <- cor(df,method= "pearson")
 corrplot(corr, type="upper", order="hclust", tl.col="black", tl.srt=45)
 ```
 
-La variable corr est une matrice de correlation permettant d'evaluer la dependance entre les differentes variables, la fonction corrplot permet de visualiser la matrice de correlation.
-Les correlation positives sont affichées en bleu et les correlations negatives sont affichées en rouge, l'intensité de la  couleur et la taille des cercles sont proportionnelles.
 
-Observation: 
+La variable corr est une matrice de corrélation permettant d’évaluer la dépendance entre les différentes variables, la fonction corrplot permet de visualiser la matrice de corrélation.
+Les corrélation positives sont affichées en bleu et les corrélations négatives sont affichées en rouge, l'intensité de la  couleur et la taille des cercles sont proportionnelles.
 
-- le correlogramme montre que RH est en correlation negative avec le temp, la taille du cercle montrant les correlations entre RH avec area et RH avec wind sont tres reduites ce qui montre une faible correlation.
+Observations: 
 
-- le correlogramme montre aussi une faible correlation positive entre les variables RH et rain,rain et temp puis temp et area.
-
+- le correlogramme montre que RH est en corrélation négative avec le temp, la taille du cercle montrant les corrélations entre RH et area puis RH et wind sont très réduites ce qui montre qu'elle y a une faible corrélation.
+- le correlogramme montre aussi une faible corrélation positive entre les variables RH et rain,rain et temp puis temp et area.
 
   
 ```{r,echo=TRUE}
@@ -171,9 +168,9 @@ plot_grid(g1, g2,g3,g4,ncol = 2, nrow = 2,label_size = 1.5)
 ```
 
 
-- La courbe 1 de la regression lineaire montre qu'il y'a une dependance entre la temperature et l'humidité ce qui veut dire que plus que la temperature est basse plus que l'humidité est elevée et l'humidité devient faible lorsque la temperature est élevée.
+- La courbe 1 de la régression linéaire montre qu'il y a une dépendance entre la température et l'humidité ce qui veut dire que plus que la température est basse plus que l'humidité est élevée et l'humidité devient faible lorsque la température est élevée.
 
-- La courbe 2 et 3 de la regression lineaire montre qu'elle y'a une faible dependance entre la temperature et la pluie, puis la temperature et la vitesse du vent, cela permet de dire que la temperature n'est pas la seule facteur qui impacte la pluie et le vent.  
+- Les courbes 2 et 3 de la régression lineaire montre qu'elles y'a une faible dependance entre la temperature et la pluie, puis la temperature et la vitesse du vent, cela permet de dire que la temperature n'est pas le seul facteur qui impacte la pluie et le vent.  
 
 - La courbe 4 de la regression lineaire montre que la temperature a un impacte sur les petites surfaces de la foret brulées, la surface de la foret brulée augmente lorsque la temperature devient de plus en plus grande.
 
@@ -181,7 +178,6 @@ plot_grid(g1, g2,g3,g4,ncol = 2, nrow = 2,label_size = 1.5)
 
 Question_1
 ```{r,echo=TRUE}
-library(tidyverse)
 datasetT <- read.csv2(file="/home/ndoye/TPRSSD/TPSTAT/titanic.csv")
 ```
 
@@ -192,7 +188,8 @@ summary(datasetT)
 
 **Question_3**
 
-La variable age est supposée etre une variable quantitative donc doit etre de type reel, pour se faire il est necessaire de convertir la variable age en double.
+
+La variable age est supposée être une variable quantitative donc doit être de type réel, pour se faire il est nécessaire de la convertir en double.
 
 ```{r,echo=TRUE}
 age_double <- as.double(datasetT$age)
@@ -201,7 +198,7 @@ summary(datasetT)
 ```
 **Question_4**
   
-supposons que pclass est une variable quantitative discrete qui prend trois valeurs {1,2,3} et  survived une variable qualitative qui determine la statu de survie des individues 
+supposons que pclass est une variable quantitative discrète qui prend trois valeurs {1,2,3} et  survived une variable qualitative qui détermine la statu de survie des individues 
 
 ```{r,echo=TRUE}
 classep <- datasetT$pclass
@@ -212,15 +209,14 @@ dfp1 <- data.frame(percent1)
 dfp1$labelpos <- ifelse(dfp1$survécu=="yes",dfp1$Freq/2,1 - dfp1$Freq/2)
 g <- ggplot(data = dfp1) +
   geom_bar(stat="identity",mapping = aes(x=classep,y=Freq,fill=survécu)) + 
-  geom_text(aes(x=classep,y=labelpos,label=paste0(round(Freq*100,2),"%"))) +  
-  ggtitle("Classe des passagers et leur statut de survie")
+  geom_text(aes(x=classep,y=labelpos,label=paste0(round(Freq*100,2),"%"))) +
+  ggtitle("Diagramme en baton") + xlab("classe des passagers") + ylab("Fréquences")
 g + theme (plot.title = element_text(size=11,face="bold",hjust = 0.5))
 ```
 
-Le barplot indique que dans la classe 1 des passagers 63.73% des individues ont survécus lors du nauffrage et 36.27% n'ont pas survécus, ce qui montre qu'il y'a eu plus des survécus que des non survécus.
+Le barplot indique que dans la classe 1 des passagers 63.73% des individues ont survécus contre 36.27% des individues qui n'ont pas survécus, ce qui montre qu'il y a eu plus des survécus que des non survécus.
 
-Dans la la classe 2 des passagers le barplot indique que 44.06% des individues ont survécu et 55.94% n'ont pas survécus, dans la classe 3 des passagers 26.15% des passagers ont survécus et 73.85% des passagers n'ont pas survécus. 
-Ce qui montre qu'il y'a plus des non survécus que des survécus dans classe 2 et 3 des passagers.
+Dans la la classe 2 des passagers le barplot indique que 44.06% des individues ont survécus contre 55.94% qui n'ont pas survécus, dans la classe 3 des passagers 26.15% des passagers ont survécus contre  73.85% des passagers qui  n'ont pas survécus, ce qui montre qu'il y a plus des non survécus que des survécus dans les classes 2 et 3 des passagers.
 
 **Question_5**
 
@@ -234,25 +230,28 @@ dfp2$labelpos <- ifelse(dfp2$survécu=="yes",dfp2$Freq/2,1-dfp2$Freq/2)
 g <- ggplot(data = dfp2) + 
   geom_bar(stat="identity",mapping = aes(x=sexe,y=Freq,fill=survécu)) + 
   geom_text(aes(x=sexe,y=labelpos,label=paste0(round(Freq*100,2),"%")))+
-  ggtitle("Sexe des passagers et leur statut de survie") 
+  ggtitle("Diagramme en baton ") + ylab("Fréquences") 
   g + theme (plot.title = element_text(size=11,face="bold",hjust = 0.5))
 ```
 
 
-Le barplot indique que lors du nauffrage 75.26% de la population feminine a survécus et 24.74% n'ont pas survécus, on compte aussi 20.52% de la population masculine qui a  survécus et 79.48% qui n'ont pas survécus
-Ce qui montre que la population feminine a plus survécu que la population masculine.
+Le barplot indique que lors du naufrage 75.26% de la population feminine a survécus et 24.74% n'ont pas survécus, on compte aussi 20.52% de la population masculine qui a  survécu et 79.48% qui n'ont pas survécus,ce qui montre que la population feminine a plus survécu que la population masculine.
 
 **Question_6**
 
 ```{r,echo=TRUE}
 agep <- datasetT$age
-survi <- datasetT$survived
-dfp3 <- data.frame(agep,survi)
-g <- ggplot(data=dfp3, mapping=aes(x=agep, colour=survi, fill=survi)) + 
+survécu <- datasetT$survived
+dfp3 <- data.frame(agep,survécu)
+g <- ggplot(data=dfp3, mapping=aes(x=agep, colour=survécu, fill=survécu)) + 
 geom_histogram(aes(x=agep,y=..density..), alpha=0.5,position="identity")+
 geom_density(alpha=.2) +
-ggtitle("l'age des passagers et leur statut de survie")
-g + theme (plot.title = element_text(size=11,face="bold",hjust = 0.5))
+  ggtitle("Histogramme et densite ") + xlab("l'age des passagers")
+p <- ggplot(data=dfp3, aes(y=agep, fill=survécu))+
+  geom_boxplot() + 
+  ggtitle("Boite a moustache") + ylab("l'age des passagers")
+ plot_grid(g,p,ncol = 2, nrow = 1,label_size = 1.5)
+ 
 ```
 
-La courbe montre que la statu de survi des passagers varie en fontion de leurs ages
+L'histogramme et la densité montre que la statu de survi des passagers varie en fontion de leurs ages, la boite a moustache indique egalement qu'il y'a eu autant des survécus que des non survécus ce qui montre egalement que l'age n'a pas de lien sur la statu de survie des passagers.
