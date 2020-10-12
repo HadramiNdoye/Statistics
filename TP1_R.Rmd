@@ -210,7 +210,7 @@ dfp1$labelpos <- ifelse(dfp1$survécu=="yes",dfp1$Freq/2,1 - dfp1$Freq/2)
 g <- ggplot(data = dfp1) +
   geom_bar(stat="identity",mapping = aes(x=classep,y=Freq,fill=survécu)) + 
   geom_text(aes(x=classep,y=labelpos,label=paste0(round(Freq*100,2),"%"))) +
-  ggtitle("Diagramme en baton") + xlab("classe des passagers") + ylab("Fréquences")
+  ggtitle("Diagramme en bâton") + xlab("classe des passagers") + ylab("Fréquences")
 g + theme (plot.title = element_text(size=11,face="bold",hjust = 0.5))
 ```
 
@@ -230,7 +230,7 @@ dfp2$labelpos <- ifelse(dfp2$survécu=="yes",dfp2$Freq/2,1-dfp2$Freq/2)
 g <- ggplot(data = dfp2) + 
   geom_bar(stat="identity",mapping = aes(x=sexe,y=Freq,fill=survécu)) + 
   geom_text(aes(x=sexe,y=labelpos,label=paste0(round(Freq*100,2),"%")))+
-  ggtitle("Diagramme en baton ") + ylab("Fréquences") 
+  ggtitle("Diagramme en bâton ") + ylab("Fréquences") 
   g + theme (plot.title = element_text(size=11,face="bold",hjust = 0.5))
 ```
 
