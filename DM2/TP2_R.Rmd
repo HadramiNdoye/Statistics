@@ -1,0 +1,95 @@
+---
+title: "TP_2"
+author: "EL_Hadrami"
+date: "11/10/2020"
+output: pdf_document
+---
+```{r}
+library(tidyverse)
+library(cowplot)
+```
+
+```{r pressure, echo=FALSE}
+F_1 <- function(theta,n){
+  set.seed(123456)
+  u <- runif(n)
+  x <- 1 + theta - sqrt(1-u)
+  return (x)
+}
+```
+
+```{r}
+Est_Moment <- function(n,N,theta){
+  mat <- matrix(F_1(theta,N*n),nrow = N)
+  X <- apply(mat,1,mean)
+  return (X-1/3)
+}
+```
+
+```{r}
+ Est_MomentL <- function(n,N,theta){
+ mat <- matrix(F_1(theta,N*n),nrow = N)
+ thetaml <- apply(mat,1,min)
+   return (thetaml)
+ }
+```
+
+```{r,echo=TRUE}
+ N <- 1000
+ n <- c(4,8,16,32,64)
+ theta <- 5
+ f_1 <- F_1(theta,n)
+ estimateur_1 <- Est_Moment(n,N,theta)
+ estimateur_2 <- Est_MomentL(n,N,theta)
+```
+
+Comparaison de leurs lois empiriques avec les lois theoriques
+
+```{r}
+b1 <- Est_Moment(4,N,theta)
+b2 <- Est_Moment(8,N,theta)
+b3 <- Est_Moment(16,N,theta)
+b4 <- Est_Moment(32,N,theta)
+b5 <- Est_Moment(64,N,theta)
+boxplot(b1,b2,b3,b4,b5,names=c("n=4","n=8","n=16","n=32","n=64"),col=c("cyan","pink","#FCD203","red","green"))
+abline(h=theta,col="red")
+```
+```{r}
+b1r <- Est_MomentL(4,N,theta)
+b2r <- Est_MomentL(8,N,theta)
+b3r <- Est_MomentL(16,N,theta)
+b4r <- Est_MomentL(32,N,theta)
+b5r <- Est_MomentL(64,N,theta)
+boxplot(b1r,b2r,b3r,b4r,b5r,names=c("n=4","n=8","n=16","n=32","n=64"),col=c("cyan","pink","#FCD203","red","green"))
+abline(h=theta,col="red")
+```
+
+**Exercice 2**
+```{r}
+F_1p <- function(theta,n){
+  u <- runif(1)
+  x <- 1 + theta - (1-u)^(1/(2*n))
+  return (x)
+}
+```
+
+```{r}
+Est_MomentL2 <- function(n,N,theta){
+tmv <- rep(0,N)
+ for (i in 1:N){
+   tmv[i] <- F_1p(theta,n)
+ }
+ return (tmv)
+ }
+```
+
+```{r}
+b1v <- Est_MomentL2(4,N,theta)
+b2v <- Est_MomentL2(8,N,theta)
+b3v <- Est_MomentL2(16,N,theta)
+b4v <- Est_MomentL2(32,N,theta)
+b5v <- Est_MomentL2(64,N,theta)
+boxplot(b1v,b2v,b3v,b4v,b5v,names=c("n=4","n=8","n=16","n=32","n=64"),col=c("cyan","pink","#FCD203","red","green"))
+abline(h=theta,col="red")
+```
+
