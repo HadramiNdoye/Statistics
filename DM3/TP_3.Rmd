@@ -1,0 +1,122 @@
+---
+title: "DM_3"
+author: "EL_Hadrami"
+date: "19/10/2020"
+output: pdf_document
+---
+
+```{r}
+library(ggpubr)
+library(tidyverse)
+```
+
+```{r}
+load("/home/ndoye/Statistics/DM3/mpg.Rdata")
+```
+
+
+```{r}
+mpg.r$city_gmp <- 1/mpg.r$cty
+```
+
+**Exercice_1**
+
+**Test de normalité**
+```{r}
+ctyaut <- mpg.r$cty[mpg.r$trans=="auto"]
+shapiro.test(ctyaut)
+qqnorm(ctyaut)
+qqline(ctyaut)
+ctym <- mpg.r$cty[mpg.r$trans=="manu"]
+shapiro.test(ctym)
+qqnorm(ctym)
+qqline(ctym)
+```
+
+```{r}
+hwyaut <- mpg.r$hwy[mpg.r$trans=="auto"]
+shapiro.test(hwyaut)
+qqnorm(hwyaut)
+hwym <- mpg.r$hwy[mpg.r$trans=="manu"]
+shapiro.test(hwym)
+qqnorm(hwym)
+qqline(hwym)
+```
+
+
+```{r}
+cga <- mpg.r$city_gmp[mpg.r$trans=="auto"]
+df3 <- data.frame(cga)
+shapiro.test(cga)
+qqnorm(cga)
+qqline(cga)
+cgm <- mpg.r$city_gmp[mpg.r$trans=="manu"]
+shapiro.test(cgm)
+qqnorm(cgm)
+qqline(cgm)
+```
+
+**Test d'egalité des variances**
+```{r}
+tes1 <- var.test(mpg.r$cty,mpg.r$hwy)
+t.test(mpg.r$cty)$conf.int # intervall de confiance pour la variable cty
+t.test(mpg$hwy)$conf.int
+```
+
+**Exercice_2**
+
+```{r}
+alternativef <- function(t,df,alternative){
+  if (alternative=="two.sided"){
+    p_value <- 2*pt(abs(t),df,lower.tail = FALSE)
+    return (p_value)
+  }
+  if (alternative=="less"){
+    p_value <- pt(t,df)
+    return(p_value)
+  }
+   if (alternative=="greater"){
+    p_value <- pt(t,df,lower.tail = FALSE)
+    return(p_value)
+  }
+}
+```
+```{r}
+myt.test <- function(x,y,alternative,paired,var.equal){
+  nx <- length(x)
+  ny <- length(y)
+  d <- x-y
+    if(paired==TRUE){
+      t <- mean(d) / sqrt(var(d)/nx)
+      df <- nx - 1 
+      pvalue <- alternativef(t,df,alternative)
+      return(list("Student two paired sample t-test",alternative,p.value=pvalue,df=df,statistics=t))
+    }
+    if(var.equal==FALSE){
+      sqrt1 <- sqrt(var(x)/nx)
+      sqrt2 <- sqrt(var(y)/ny)
+      w <- mean(x) - mean(y) / sqrt1 + sqrt2
+      s_carre_x_n_x <- var(x)/nx
+      s_carre_y_n_y <- var(y)/ny
+      df <- (s_carre_x_n_x +  s_carre_y_n_y)^2/((1/(nx-1)) * s_carre_x_n_x^2 + (1/(ny-1))*(s_carre_y_n_y^2))
+      pvalue <- alternativef(w,df,alternative)
+      return(list("Welch two sample t-test",alternative,p.value=pvalue,df=df,statistics=w))
+    }
+    if(var.equal==TRUE){
+      s_carré <- (length(x) - 1) * var(x) + (ny - 1) * var(y) / (nx + ny - 2)
+      t <- (mean(x) - mean(y)) / (sqrt(s_carré)*(1/nx) + 1/ny)
+      df <- nx + ny - 2
+      pvalue <- alternativef(t,df,alternative)
+      return(list("Student two samplet-test",alternative,p.value=pvalue,df=df,statistics=t))
+    }
+}
+```
+
+test 
+
+```{r}
+
+```
+
+
+
