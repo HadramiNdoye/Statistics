@@ -3,11 +3,78 @@ title: "TP_2"
 author: "EL_Hadrami"
 date: "11/10/2020"
 output: pdf_document
+
+  
 ---
 ```{r}
+library(tinytex)
 library(tidyverse)
 library(cowplot)
 ```
+
+**La partie theorique**
+
+**Exercise_1:**Soit la densité
+
+$$
+f(x)=2(1-x) I\{0 \leq x \leq 1\} \ \ (1)
+$$
+et soit $X_{1}, \ldots, X_{n}$ un échantillon i.i.d. avec $X_{1} \sim \bar{F}$ où $\bar{F}$ est une fonction de répartition (f.d.r.) de densité $f(\cdot)$.
+  
+1. On définit $X_{(1)}=\min _{1 \leq i \leq n} X_{i}$. Quelle est la fonction de répartition $F_{(1)}$ de $X_{(1)} ?$
+
+- Calcul de la fonction de repartition de $X$
+
+$\bar{F}(t)$ = $P(X \leq t)$ = $\int_{0}^{t} f(x) \mathrm{d} x$ = $2\int_{0}^{t} (1-x) \mathrm{d} x$ = 2$\left[x-\frac{x^{2}}{2}\right]_{0}^{t}$ = $2(t-\frac{t^{2}}{2})$ = $t(2-t)$
+  
+- Calcul de la fonction de surivie
+
+$s(t)$ = $P(X>t)$ = $1-\bar{F}(t)$ = $(1-t)^2$
+
+- Soit $X_{(n)}=\max _{1 \leq i \leq n} X_{i}$, calculons la fonction de repartition de $X_{(n)}$:
+
+$F_{(n)}(t)$ = $P(X_{(n)}\leq t)$ = $P(\max _{1 \leq i \leq n} X_{i} \leq t)$ = $P(X_{(1)} \leq t$ et $X_{(2)} \leq t, \ldots, X_{n} \leq t)$ = $\prod_{i=1}^n(P(X_{(i)}\leq t)$ = $\bar{F}^{n}(t)$ = $t^{n}(2-t)^{n}$
+
+$F_{(1)}(t)$ = $P(X_1(t))$ = $P(\min _{1 \leq i \leq n} X_{i} \leq t)$ = $1-P(\min _{1 \leq i \leq n} X_{i} >t)$ = 
+
+$1-P$($X_{(1)}$ $>t$ et $X_{(2)}$ $>t$, $\ldots, X_{n}$ $> t$) = $1-$$\prod_{i=1}^n$$(P$($X_{(i)}$ $>t$)$)$ = $1-s^{2n}(t)$ = $1-(1-t)^{2n}$
+
+$$
+\boxed {F_{(1)}(X_{(1)}) = 1-(1-t)^{2n}}
+$$
+2. la loi de la variable aléatoire $F_{(1)}\left(X_{(1)}\right)$
+
+soit $Y=F_{(1)}(X_{(1)})$
+
+$P(Y\leq t)$ = $P(F_{(1)}(X_{(1)})\leq t)$ = $P(X_{(1)} \leq F_{(1)}^{-1}(t))$ = $t$
+$$
+\boxed{F_{(1)} \sim U[0,1]}
+$$
+
+
+**Exercise 2.** On dispose d'un échantillon $X_{1}, \ldots, X_{n}$ i.i.d. de loi de densité $f(x-\theta)$ comme dans (1)
+$$
+f(x-\theta)=2(1-x+\theta) I\{\theta \leq x \leq 1+\theta\}
+$$
+On suppose que le paramètre $\theta \in \mathbf{R}$ est inconnu.
+
+1. Calcul de la f.d.r. $F_{\theta}$ des $X_{i}$ et $F_{(1), \theta}$ la f.d.r. de $X_{(1)}$.
+
+- Calcul de la fonction de repartition de $F_{\theta}$ des $X_{i}$
+
+$\bar{F}_{\theta}(t)$ = $P(X \leq t)$ = $\int_{\theta}^{t} f(x-\theta) \mathrm{d} x$ = $\int_{\theta}^{t} 2(1-x+\theta) \mathrm{d} x$ = 2$\left[x-\frac{x^{2}}{2}+\theta x\right]_{\theta}^{t}$ = $(t-\theta)(2-t+\theta)$ 
+$$
+\boxed{\bar{F}_{\theta}=(t-\theta)(2-t+\theta)}
+$$
+
+$F_{(1), \theta}$ = $P(\min _{1 \leq i\leq n} X_{i} \leq t)$ = $1-P(\min _{1 \leq i \leq n} X_{i} >t)$ = $1-\prod_{i=1}^n(P(X_{(i)}>t))$ = $1-(1+\theta-t)^{2n}$
+$$
+\boxed{F_{(1)}, \theta = 1-(1+\theta-t)^{2n}}
+$$
+2. Calcule de l'espérance des $X_{i}$.
+
+    
+
 
 ```{r pressure, echo=FALSE}
 F_1 <- function(theta,n){
@@ -21,13 +88,13 @@ F_1 <- function(theta,n){
 ```{r}
 Est_Moment <- function(n,N,theta){
   mat <- matrix(F_1(theta,N*n),nrow = N)
-  X <- apply(mat,1,mean)
-  return (X-1/3)
+  X_barre <- apply(mat,1,mean)
+  return (X_barre-1/3)
 }
 ```
 
 ```{r}
- Est_MomentL <- function(n,N,theta){
+ Est_MomentVS <- function(n,N,theta){
  mat <- matrix(F_1(theta,N*n),nrow = N)
  thetaml <- apply(mat,1,min)
    return (thetaml)
@@ -38,9 +105,6 @@ Est_Moment <- function(n,N,theta){
  N <- 1000
  n <- c(4,8,16,32,64)
  theta <- 5
- f_1 <- F_1(theta,n)
- estimateur_1 <- Est_Moment(n,N,theta)
- estimateur_2 <- Est_MomentL(n,N,theta)
 ```
 
 Comparaison de leurs lois empiriques avec les lois theoriques
@@ -51,18 +115,29 @@ b2 <- Est_Moment(8,N,theta)
 b3 <- Est_Moment(16,N,theta)
 b4 <- Est_Moment(32,N,theta)
 b5 <- Est_Moment(64,N,theta)
-boxplot(b1,b2,b3,b4,b5,names=c("n=4","n=8","n=16","n=32","n=64"),col=c("cyan","pink","#FCD203","red","green"))
+boxplot(b1,b2,b3,b4,b5,names=c("n=4","n=8","n=16","n=32","n=64"),
+        col=c("cyan","pink","#FCD203","red","green"),
+        xlab="n",ylab="thetamm",main="boxplot pour chaque valeur de n")
 abline(h=theta,col="red")
 ```
 ```{r}
-b1r <- Est_MomentL(4,N,theta)
-b2r <- Est_MomentL(8,N,theta)
-b3r <- Est_MomentL(16,N,theta)
-b4r <- Est_MomentL(32,N,theta)
-b5r <- Est_MomentL(64,N,theta)
-boxplot(b1r,b2r,b3r,b4r,b5r,names=c("n=4","n=8","n=16","n=32","n=64"),col=c("cyan","pink","#FCD203","red","green"))
+b1r <- Est_MomentVS(4,N,theta)
+b2r <- Est_MomentVS(8,N,theta)
+b3r <- Est_MomentVS(16,N,theta)
+b4r <- Est_MomentVS(32,N,theta)
+b5r <- Est_MomentVS(64,N,theta)
+boxplot(b1r,b2r,b3r,b4r,b5r,names=c("n=4","n=8","n=16","n=32","n=64"),
+        col=c("cyan","pink","#FCD203","red","green"),
+        xlab="n",ylab="thetaml",main="boxplot pour chaque valeur de n")
 abline(h=theta,col="red")
 ```
+
+```{r}
+x<- rnorm(N,5,(0.3)^2) 
+hist(Est_Moment(8,N,theta),probability = TRUE,main="histogramme et densité")
+curve(dnorm(x,5,(0.3)^2),ylim=c(0,7),col="red",add=T)
+```
+
 
 **Exercice 2**
 ```{r}
@@ -74,7 +149,7 @@ F_1p <- function(theta,n){
 ```
 
 ```{r}
-Est_MomentL2 <- function(n,N,theta){
+Est_MomentVS2 <- function(n,N,theta){
 tmv <- rep(0,N)
  for (i in 1:N){
    tmv[i] <- F_1p(theta,n)
@@ -84,12 +159,14 @@ tmv <- rep(0,N)
 ```
 
 ```{r}
-b1v <- Est_MomentL2(4,N,theta)
-b2v <- Est_MomentL2(8,N,theta)
-b3v <- Est_MomentL2(16,N,theta)
-b4v <- Est_MomentL2(32,N,theta)
-b5v <- Est_MomentL2(64,N,theta)
-boxplot(b1v,b2v,b3v,b4v,b5v,names=c("n=4","n=8","n=16","n=32","n=64"),col=c("cyan","pink","#FCD203","red","green"))
+b1v <- Est_MomentVS2(4,N,theta)
+b2v <- Est_MomentVS2(8,N,theta)
+b3v <- Est_MomentVS2(16,N,theta)
+b4v <- Est_MomentVS2(32,N,theta)
+b5v <- Est_MomentVS2(64,N,theta)
+boxplot(b1v,b2v,b3v,b4v,b5v,names=c("n=4","n=8","n=16","n=32","n=64"),
+        col=c("cyan","pink","#FCD203","red","green"),
+        xlab="n",ylab="thetaml",main="boxplot pour chaque valeur de n")
 abline(h=theta,col="red")
 ```
 
