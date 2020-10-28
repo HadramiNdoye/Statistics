@@ -21,17 +21,42 @@ mpg.r$city_gmp <- 1/mpg.r$cty
 
 **Exercice_1**
 
-**Test de normalité**
+- **Pour la variable cty**
+
+Test de normalité
 ```{r}
 ctyaut <- mpg.r$cty[mpg.r$trans=="auto"]
 shapiro.test(ctyaut)
 qqnorm(ctyaut)
-qqline(ctyaut)
 ctym <- mpg.r$cty[mpg.r$trans=="manu"]
 shapiro.test(ctym)
 qqnorm(ctym)
 qqline(ctym)
 ```
+
+Pour la variable city_ gmp
+
+```{r}
+cga <- mpg.r$city_gmp[mpg.r$trans=="auto"]
+df3 <- data.frame(cga)
+shapiro.test(cga)
+qqnorm(cga)
+cgm <- mpg.r$city_gmp[mpg.r$trans=="manu"]
+shapiro.test(cgm)
+qqnorm(cgm)
+```
+
+Test d'egalité des variances
+```{r}
+var.test(mpg.r$cty ~ trans,data=mpg.r)
+var.test(mpg.r$hwy ~ trans,data=mpg.r)
+t.test(mpg.r$cty)$conf.int # intervall de confiance pour la variable cty
+t.test(mpg$hwy)$conf.int
+```
+
+- **Pour la variable hwy**
+
+Test de normalité
 
 ```{r}
 hwyaut <- mpg.r$hwy[mpg.r$trans=="auto"]
@@ -40,27 +65,6 @@ qqnorm(hwyaut)
 hwym <- mpg.r$hwy[mpg.r$trans=="manu"]
 shapiro.test(hwym)
 qqnorm(hwym)
-qqline(hwym)
-```
-
-
-```{r}
-cga <- mpg.r$city_gmp[mpg.r$trans=="auto"]
-df3 <- data.frame(cga)
-shapiro.test(cga)
-qqnorm(cga)
-qqline(cga)
-cgm <- mpg.r$city_gmp[mpg.r$trans=="manu"]
-shapiro.test(cgm)
-qqnorm(cgm)
-qqline(cgm)
-```
-
-**Test d'egalité des variances**
-```{r}
-tes1 <- var.test(mpg.r$cty,mpg.r$hwy)
-t.test(mpg.r$cty)$conf.int # intervall de confiance pour la variable cty
-t.test(mpg$hwy)$conf.int
 ```
 
 **Exercice_2**
@@ -98,7 +102,8 @@ myt.test <- function(x,y,alternative,paired,var.equal){
       w <- mean(x) - mean(y) / sqrt1 + sqrt2
       s_carre_x_n_x <- var(x)/nx
       s_carre_y_n_y <- var(y)/ny
-      df <- (s_carre_x_n_x +  s_carre_y_n_y)^2/((1/(nx-1)) * s_carre_x_n_x^2 + (1/(ny-1))*(s_carre_y_n_y^2))
+      df <- (s_carre_x_n_x +  s_carre_y_n_y)^2/((1/(nx-1)) * s_carre_x_n_x^2 + 
+            (1/(ny-1))*(s_carre_y_n_y^2))
       pvalue <- alternativef(w,df,alternative)
       return(list("Welch two sample t-test",alternative,p.value=pvalue,df=df,statistics=w))
     }
@@ -113,10 +118,73 @@ myt.test <- function(x,y,alternative,paired,var.equal){
 ```
 
 test 
-
+  
 ```{r}
-
+# deux vecteur de meme taille 
+x <- c(0.5548773,  1.1915892, -0.4580385, -0.1115346,  0.8131957,  1.5057274,0.2969755, 
+       0.3173708, 1.9979060, -0.3039169,  0.121106)
+y <- c(0.6483476,  1.8113529,  2.0418074,  0.9330143,  1.2162020,  
+        0.4360250,0.8259032, 0.8762932, -0.3322635,-0.3039169,  0.121106)
+myt.test(x, y,alternative = "greater",paired = TRUE, var.equal = FALSE)
+t.test(x, y,alternative = "greater",paired = TRUE, var.equal = FALSE)
 ```
 
 
+**Exercice_3**
+
+
+```{r}
+# importation des données
+data_diamonds <- read.delim("/home/ndoye/Statistics/DM3/diamonds.dat",sep="")
+summary(data_diamonds)
+# extraction d'un data frame prix et clarté
+Price <- data_diamonds$Price
+Clarity <- data_diamonds$Clarity
+df_price_clarity <- data.frame(Price,Clarity)
+summary(df_price_clarity)
+mean_IF <- mean(Price[Clarity=="IF"])
+mean_VVS1 <- mean(Price[Clarity=="VVS1"])
+mean_VVS2 <- mean(Price[Clarity=="VVS2"])
+mean_VS1 <- mean(Price[Clarity=="VS1"])
+mean_VS2 <- mean(Price[Clarity=="VS2"])
+mean_price <- c(mean_IF,mean_VVS1,mean_VVS2,mean_VS1,mean_VS2)
+clarity <- c("IF","VVS1","VVS2","VS1","VS2")
+dfmean <- data.frame(mean_price,clarity)
+g1 <- ggplot(data = dfmean) + 
+geom_bar(stat="identity",mapping = aes(x = clarity,y = mean_price,fill=clarity)) + 
+geom_text(aes(x=clarity,y=mean_price/2,label=(round(mean_price,2))),position = "dodge") +
+ggtitle("Diagramme en bâton representant les moyennes des cinq clartée ") 
+g1 + theme (plot.title = element_text(size=11,face="bold",hjust = 0.5))
+g2 <- ggplot(df_price_clarity,aes(Clarity,Price, fill=Clarity)) + geom_boxplot() +
+      stat_summary(aes(y = Price),fun = "mean",color="red", fill="red") + stat_summary(aes(y = Price),fun="median",color="blue", fill="blue") + ggtitle("Boite a moustache")
+g2 + theme (plot.title = element_text(size=11,face="bold",hjust = 0.5))
+```
+
+Analyse de variance
+
+```{r}
+An_var <- lm(Price~Clarity)
+anova(An_var)
+```
+test de fisher
+```{r}
+```
+
+test de Tukey
+```{r}
+df_price_clarity.aov <- aov(Price~Clarity)
+TukeyHSD(df_price_clarity.aov)
+```
+test de bonferroni
+```{r}
+pairwise.t.test(Price, Clarity, pool.sd = TRUE,
+p.adjust.method = "bonf")
+```
+
+test de Barlette
+
+```{r}
+bartlett.test(Price ~ Clarity, data = df_price_clarity)
+```
+  
 
