@@ -10,10 +10,14 @@ library(ggpubr)
 library(tidyverse)
 ```
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message=FALSE,warning = FALSE)
+```
+
 ```{r}
 load("/home/ndoye/Statistics/DM3/mpg.Rdata")
 ```
-
+  
 
 ```{r}
 mpg.r$city_gmp <- 1/mpg.r$cty
@@ -155,12 +159,27 @@ geom_bar(stat="identity",mapping = aes(x = clarity,y = mean_price,fill=clarity))
 geom_text(aes(x=clarity,y=mean_price/2,label=(round(mean_price,2))),position = "dodge") +
 ggtitle("Diagramme en bâton representant les moyennes des cinq clartée ") 
 g1 + theme (plot.title = element_text(size=11,face="bold",hjust = 0.5))
+```
+
+Le barplot montre le prix moyen d'un diamant selon sa clartée, on constate que le prix d'un diamant varie en fonction de sa clartée, par exemple: un diamant de clartée IF est beaucoup moins chers que les autre diamants et un diamant de clartée VS2 est beaucoup plus chers que tous les autres diamants.
+
+```{r}
 g2 <- ggplot(df_price_clarity,aes(Clarity,Price, fill=Clarity)) + geom_boxplot() +
-      stat_summary(aes(y = Price),fun = "mean",color="red", fill="red") + stat_summary(aes(y = Price),fun="median",color="blue", fill="blue") + ggtitle("Boite a moustache")
+      stat_summary(aes(y = Price),
+      fun = "mean",color="red", fill="red") + stat_summary(aes(y = Price),fun="median",color="blue", fill="blue") + ggtitle("Boite a moustache")
 g2 + theme (plot.title = element_text(size=11,face="bold",hjust = 0.5))
 ```
 
+Cette image montre le boxplot des prix de diamants en fonction de leurs groupes de clartée, les points bleus et rouges qui se trouvent sur chaque boxplot indique la mediane et la moyenne des groupes de clarté, on observe aussi des valeurs aberrantes dans chaque boxplot
+
+**Question_3**
+
+Apres avoir fait le barplot sur les prix moyens des diamants en fonction de leur clartée, on constate qu'il y a une difference significative entre le prix de diamant de clarté "IF" et les autres groupe de clarté, car le prix moyen de diamants de clarté IF est largement inferieur aux prix moyen des diamants des autres groupes de clarté.
+
 Analyse de variance
+
+soient les deux hypoteses suivantes:
+
 
 ```{r}
 An_var <- lm(Price~Clarity)
@@ -182,7 +201,7 @@ p.adjust.method = "bonf")
 ```
 
 test de Barlette
-
+  
 ```{r}
 bartlett.test(Price ~ Clarity, data = df_price_clarity)
 ```
