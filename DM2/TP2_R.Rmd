@@ -1,7 +1,7 @@
 ---
-title: "TP_2"
-author: "EL_Hadrami"
-date: "11/10/2020"
+title: "DM2_statistique"
+author: "N'DOYE EL Hadrami"
+date: '`r format(Sys.Date(),"%d,%B,%Y")`'
 output: pdf_document
 
   
@@ -14,14 +14,14 @@ library(cowplot)
 
 **La partie theorique**
 
-**Exercise_1:**Soit la densité
+**Exercise_1:** Soit la densité
 
 $$
 f(x)=2(1-x) I\{0 \leq x \leq 1\} \ \ (1)
 $$
 et soit $X_{1}, \ldots, X_{n}$ un échantillon i.i.d. avec $X_{1} \sim \bar{F}$ où $\bar{F}$ est une fonction de répartition (f.d.r.) de densité $f(\cdot)$.
   
-1. On définit $X_{(1)}=\min _{1 \leq i \leq n} X_{i}$. Quelle est la fonction de répartition $F_{(1)}$ de $X_{(1)} ?$
+**1. On définit $X_{(1)}=\min _{1 \leq i \leq n} X_{i}$. Quelle est la fonction de répartition $F_{(1)}$ de $X_{(1)} ?$**
 
 - Calcul de la fonction de repartition de $X$
 
@@ -37,12 +37,12 @@ $F_{(n)}(t)$ = $P(X_{(n)}\leq t)$ = $P(\max _{1 \leq i \leq n} X_{i} \leq t)$ = 
 
 $F_{(1)}(t)$ = $P(X_1(t))$ = $P(\min _{1 \leq i \leq n} X_{i} \leq t)$ = $1-P(\min _{1 \leq i \leq n} X_{i} >t)$ = 
 
-$1-P$($X_{(1)}$ $>t$ et $X_{(2)}$ $>t$, $\ldots, X_{n}$ $> t$) = $1-$$\prod_{i=1}^n$$(P$($X_{(i)}$ $>t$)$)$ = $1-s^{2n}(t)$ = $1-(1-t)^{2n}$
+$1-P$($X_{(1)}$ $>t$ et $X_{(2)}$ $>t$, $\ldots, X_{n}$ $> t$) = $1-\prod_{i=1}^n(P(X_{(i)} >t))$ = $1-s^{2n}(t)$ = $1-(1-t)^{2n}$
 
 $$
 \boxed {F_{(1)}(X_{(1)}) = 1-(1-t)^{2n}}
 $$
-2. la loi de la variable aléatoire $F_{(1)}\left(X_{(1)}\right)$
+**2. la loi de la variable aléatoire $F_{(1)}\left(X_{(1)}\right)$**
 
 soit $Y=F_{(1)}(X_{(1)})$
 
@@ -50,15 +50,17 @@ $P(Y\leq t)$ = $P(F_{(1)}(X_{(1)})\leq t)$ = $P(X_{(1)} \leq F_{(1)}^{-1}(t))$ =
 $$
 \boxed{F_{(1)} \sim U[0,1]}
 $$
+**3.** Montrons que la f.d.r de la v.a $X=F^{-1}(U)$ est exactement F(.)
 
-
+$F_{X}(t)=P(X\leq t)=P(F^{-1}(U)\leq t)=P(U\leq F(t))=F(F(t))$, donc la f.d.r de $X$ est $F(.)$
+  
 **Exercise 2.** On dispose d'un échantillon $X_{1}, \ldots, X_{n}$ i.i.d. de loi de densité $f(x-\theta)$ comme dans (1)
 $$
 f(x-\theta)=2(1-x+\theta) I\{\theta \leq x \leq 1+\theta\}
 $$
 On suppose que le paramètre $\theta \in \mathbf{R}$ est inconnu.
 
-1. Calcul de la f.d.r. $F_{\theta}$ des $X_{i}$ et $F_{(1), \theta}$ la f.d.r. de $X_{(1)}$.
+**1. Calcul de la f.d.r. $F_{\theta}$ des $X_{i}$ et $F_{(1), \theta}$ la f.d.r. de $X_{(1)}$.**
 
 - Calcul de la fonction de repartition de $F_{\theta}$ des $X_{i}$
 
@@ -71,10 +73,84 @@ $F_{(1), \theta}$ = $P(\min _{1 \leq i\leq n} X_{i} \leq t)$ = $1-P(\min _{1 \le
 $$
 \boxed{F_{(1)}, \theta = 1-(1+\theta-t)^{2n}}
 $$
-2. Calcule de l'espérance des $X_{i}$.
+**2. Calcul de l'espérance des $X_{i}$.**
 
-    
+$E[X]$ = $\int_{\theta}^{t}xf(x-\theta) \mathrm{d} x$ = $2\int_{\theta}^{t} x(1-x+\theta) \mathrm{d} x$ = $\theta + \frac{1}{3}$
+$$
+\boxed{E[X] = \theta + \frac{1}{3}}
+$$
+**3. Proposition d'un estimateur $\hat{\theta}_{MM}$ par la méthode des moment de $\theta$:**
 
+$\bar{X}_{n}$ = $\frac{1}{n}\sum_{i=1}^n{X_{i}} \underset{n \to +\infty}{\overset{PS}{\longrightarrow}}E[X]$
+
+$E[X]=\theta + 1/3$  donc $\hat{\theta}_{MM}$ = $\bar{X}_{n}-1/3$
+$$
+\boxed{\hat{\theta}_{MM}=\bar{X}_{n}-\frac{1}{3}}
+$$
+L’estimateur $\hat{\theta}_{MM}$, est-il consistent? Sans biais?
+
+- $\hat{\theta}_{MM}$ = $\bar{X}_{n}-\frac{1}{3}\underset{n \to +\infty}{\overset{PS}{\longrightarrow}}E[X]-\frac{1}{3}$ = $\theta+\frac{1}{3}-\frac{1}{3} = \theta$
+
+donc $\hat{\theta}_{MM}$ est un estimateur consistant.
+
+- $E[\hat{\theta}_{MM}]-\theta$ = $E[\bar{X_{n}}-\frac{1}{3}]-\theta=E[X]-\frac{1}{3}-\theta=0$
+
+donc $\hat{\theta}_{MM}$ est un estimateur sans biais
+
+**Calcul de la variance**
+
+$V[\hat{\theta}_{MM}]=V[X]=\frac{1}{18n}$
+$$
+\boxed{V[\hat{\theta}_{MM}]=\frac{1}{18n}}
+$$
+
+**Calcul du risque quadratique**
+
+Comme $\hat{\theta}_{MM}$ est sans biais donc
+$E[(\hat{\theta}_{MM}-\theta)^{2}]=V[\hat{\theta}_{MM}]=\frac{1}{18n}$
+
+**loi loi asymptotique de $\hat{\theta}_{MM}$**
+
+d'apres le theoreme central limite
+
+$$\frac{\hat{\theta}_{MM}-E[\hat{\theta}_{MM}]}{\sqrt{V[\hat{\theta}_{MM}]}}\underset{n \to +\infty}{\overset{Loi}{\longrightarrow}}N(0,1)$$
+donc la loi asymptotique de de $\hat{\theta}_{MM}$ est une loi normale centrée-reduite
+
+**4. Calcule de l’estimateur du maximum de vraisemblance** **$\hat{\theta}_{MV}$**.
+
+$L_{n}(\theta,X_{1}\ldots,X_{n})=f_{(X_{1},\ldots,X_{n})}(X_{1},\dots,X_{n},\theta)$ avec $f_{(X_{1},\ldots,X_{n})}(X_{1},\dots,X_{n},\theta)$ la densité jointe de l'echantillons
+
+$X_{1},\dots,X_{n}$ sont i.i.d donc 
+
+$L_{n}(\theta,X_{1}\ldots,X_{n})=\prod_{i=1}^{n}f_{\theta}(X_{i})=\prod_{i=1}^{n}f(x,\theta)=\prod_{i=1}^{n}2(1-x_{i}+\theta) I\{\theta \leq x \leq 1+\theta\}$ donc 
+
+
+$$
+L_{n}(\theta) = 
+\left\{
+    \begin{array}{ll}
+        0 \ si  \ \theta < X_{(n)}-1 \\
+        \prod_{i=1}^{n}2(1-x_{i}+\theta) \ si\ X_{n}-1 \leq\theta\leq X_{(1)} \\
+        0 \ si \  \theta > X_{(1)}
+    \end{array}
+\right.
+$$ 
+donc $\hat{\theta}_{MV}=arg\ max(L_{n}(\theta))=X_{(1)}$
+$$
+\boxed{\hat{\theta}_{MV}=X_{(1)}}
+$$
+Le bias de ${\hat{\theta}_{MV}}$
+ 
+ $E[\hat{\theta}_{MV}]$= $\int_{\theta}^{0}1 \mathrm{d}x +\int_{\theta}^{1+\theta} (1+\theta-x)^{2n}\mathrm{d}x$
+ 
+ $\hat{\theta}_{MV}=\theta+\frac{1}{2n+1}$
+ 
+ $B (\hat{\theta_{MV}})=\theta+\frac{1}{2n+1}-\theta=\frac{1}{2n+1}$
+ $$
+ \boxed{B (\hat{\theta_{MV}})=\frac{1}{2n+1}}
+ $$
+
+**Exercice3**
 
 ```{r pressure, echo=FALSE}
 F_1 <- function(theta,n){
@@ -84,6 +160,7 @@ F_1 <- function(theta,n){
   return (x)
 }
 ```
+
 
 ```{r}
 Est_Moment <- function(n,N,theta){
@@ -102,6 +179,7 @@ Est_Moment <- function(n,N,theta){
 ```
 
 ```{r,echo=TRUE}
+ #Declarations des variables
  N <- 1000
  n <- c(4,8,16,32,64)
  theta <- 5
@@ -120,6 +198,10 @@ boxplot(b1,b2,b3,b4,b5,names=c("n=4","n=8","n=16","n=32","n=64"),
         xlab="n",ylab="thetamm",main="boxplot pour chaque valeur de n")
 abline(h=theta,col="red")
 ```
+
+La courbe affiche le boxplot de l'estimation de la valeur de theta par la methode des moments en fonction du nombre d'echantillons (n), plus n est grand plus 50% des valeurs observées se rapprochent de theta.
+Ce qui montre la convergence de $\hat{\theta}_{MM}$ vers $\theta$
+
 ```{r}
 b1r <- Est_MomentVS(4,N,theta)
 b2r <- Est_MomentVS(8,N,theta)
@@ -132,14 +214,21 @@ boxplot(b1r,b2r,b3r,b4r,b5r,names=c("n=4","n=8","n=16","n=32","n=64"),
 abline(h=theta,col="red")
 ```
 
+La courbe affiche le boxplot de l'estimation de la valeur de theta par la methode du maximum de vraisemblance en fonction du nombre d'echantillons (n), les valeurs observées sur les boxplots dimunies lorsqu'on augmente le nombre d'echantillon (n) et tendent vers la valeur theta.
+Ce qui montre que $\hat{\theta}_{MV}$ converge vers $\theta$
+
+Compareons la loi de  $\hat{\theta}_{MM}$ avec une loi normale mise a l’échelle
+
 ```{r}
 x<- rnorm(N,5,(0.3)^2) 
-hist(Est_Moment(8,N,theta),probability = TRUE,main="histogramme et densité")
+hist(Est_Moment(8,N,theta),probability = TRUE,main="histogramme et densité",xlab="thetamm",col="blue")
 curve(dnorm(x,5,(0.3)^2),ylim=c(0,7),col="red",add=T)
 ```
 
+L'histogramme de $\hat{\theta}_{MM}$ avec un nombre d'echantillon(n=8), correspond a une loi de normale de moyenne $\mu=5$ et d'ecart type $\sigma=0.3$.
+Donc l'estimateur par la methode des moments suit une loi normale.
 
-**Exercice 2**
+**Exercice 4**
 ```{r}
 F_1p <- function(theta,n){
   u <- runif(1)
@@ -168,5 +257,24 @@ boxplot(b1v,b2v,b3v,b4v,b5v,names=c("n=4","n=8","n=16","n=32","n=64"),
         col=c("cyan","pink","#FCD203","red","green"),
         xlab="n",ylab="thetaml",main="boxplot pour chaque valeur de n")
 abline(h=theta,col="red")
+```
+
+
+**Exercice_5**
+
+- Intervalle de confiance pour la methode des moments
+
+```{r}
+alpha <- 0.5 # niveau de confiance
+# initialisations
+born_inf <-matrix(rep(0,N),nrow = N,ncol=length(n))
+born_sup <-matrix(rep(0,N),nrow = N,ncol=length(n)) 
+  for (i in 1:length(n)){
+    born_inf[,i] <- Est_Moment(n[i],N,theta) - qnorm(1-(alpha/2))/(sqrt(n[i]*18))
+    born_sup[,i] <- Est_Moment(n[i],N,theta) + qnorm(1-(alpha/2))/(sqrt(n[i]*18))
+  }
+  born_inf[1][1]
+  born_sup[1][1]
+  t.test(Est_Moment(n,N,theta))$conf.int
 ```
 
