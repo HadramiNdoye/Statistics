@@ -8,6 +8,7 @@ output: pdf_document
 ```{r}
 library(ggpubr)
 library(tidyverse)
+library(stats)
 ```
 
 ```{r setup, include=FALSE}
@@ -17,61 +18,146 @@ knitr::opts_chunk$set(echo = TRUE,message=FALSE,warning = FALSE)
 ```{r}
 load("/home/ndoye/Statistics/DM3/mpg.Rdata")
 ```
-  
 
 ```{r}
-mpg.r$city_gmp <- 1/mpg.r$cty
+mpg.r$city_gmp <- 1/(mpg.r$cty)
 ```
 
-**Exercice_1**
+**Exercice 1**
 
 - **Pour la variable cty**
 
-Test de normalité
+$\underline{\text{a)Test de normalité}}$
+
 ```{r}
 ctyaut <- mpg.r$cty[mpg.r$trans=="auto"]
 shapiro.test(ctyaut)
 qqnorm(ctyaut)
+```
+
+Soient les deux hypoteses suivantes:
+
+$H_{0}:$ la variable cty derminant la consommation en cycle urbain par la transmission automatique est une loi normale $\\$
+$H_{a}:$ la variable cty derminant la consommation en cycle urbain par la transmission mautomatique n'est pas une loi normale $\\$
+-Decision
+
+le p-value est inferieur a la valeur de aplha fixée ($\alpha=0.05$), donc on rejette $H_{0}$ et on accepte $H_{a}$ en prenant un risque de  $4.9\%$ de se tromper, cela montre que le test est significatif.
+
+```{r}
 ctym <- mpg.r$cty[mpg.r$trans=="manu"]
 shapiro.test(ctym)
 qqnorm(ctym)
-qqline(ctym)
 ```
 
-Pour la variable city_ gmp
+Soient les deux hypoteses suivantes:
+
+$H_{0}:$ la variable cty derminant la consommation en cycle urbain par la transmission manuelle est une loi normale $\\$
+$H_{a}:$ la variable cty derminant la consommation en cycle urbain par la transmission manuelle n'est pas une loi normale $\\$
+-Decision
+
+le p-value est inferieur a la valeur de aplha fixée ($\alpha=0.05$), donc on rejette $H_{0}$ et on accepte $H_{a}$ en prenant un risque de  $4.98\%$ de se tromper, ce qui montre que le test est significatif.
+
+$\underline{\text{b)Pour la variable citygmp}}$
 
 ```{r}
 cga <- mpg.r$city_gmp[mpg.r$trans=="auto"]
 df3 <- data.frame(cga)
 shapiro.test(cga)
 qqnorm(cga)
+```
+
+Soient les deux hypoteses suivantes:$\\$
+$H_{0}:$ la variable city_gmp derminant la consommattion par distance parcourue est une loi normale $\\$
+$H_{a}:$ la variable cty derminant la consommation par distance parcourue n'est pas une loi normale $\\$
+-Decision$\\$
+le p-value est inferieur a la valeur de aplha fixée ($\alpha=0.05$), donc on rejette $H_{0}$ et on accepte $H_{a}$ en prenant un risque de  $4.99\%$ de se tromper, ce qui montre que le test est significative.
+
+
+```{r}
 cgm <- mpg.r$city_gmp[mpg.r$trans=="manu"]
 shapiro.test(cgm)
 qqnorm(cgm)
 ```
 
-Test d'egalité des variances
+Soient les deux hypoteses suivantes:$\\$
+$H_{0}:$ la variable city_gmp derminant la consommattion par distance parcourue est une loi normale $\\$
+$H_{a}:$ la variable cty derminant la consommation par distance parcourue n'est pas une loi normale $\\$
+-Decision$\\$
+le p-value est inferieur a la valeur de aplha fixée ($\alpha=0.05$), donc on rejette $H_{0}$ et on accepte $H_{a}$ en prenant un risque de  $4.986\%$ de se tromper, ce qui montre que le test est significative.
+
+$\underline{\text{c)Test d'egalité des variances}}\\$
 ```{r}
 var.test(mpg.r$cty ~ trans,data=mpg.r)
-var.test(mpg.r$hwy ~ trans,data=mpg.r)
-t.test(mpg.r$cty)$conf.int # intervall de confiance pour la variable cty
-t.test(mpg$hwy)$conf.int
+t.test(mpg.r$cty~trans,data=mpg.r)$conf.int # intervall de confiance pour la variable cty
 ```
+Soient les deux hypoteses suivantes:$\\$
+$H_{0}:$ la variance de la variable cty est identique entre les deux types de transmission(automatique et manuelle)$\\$
+$H_{a}:$ la variance de la variable cty est different entre les deux types de transmission(automatique et manuelle)$\\$
+-Decision$\\$
+le p-value est superieur a la valeur de alpha fixée ($\alpha=0.05$), donc on rejette $H_{a}$ et on accepte $H_{0}$ avec un risque de $6.01\%$ de se tromper,cela montre qu'il y a une difference significative entre les types de transmission(manuelle et automatique) sur la consommation en cycle urbain  
 
-- **Pour la variable hwy**
+$\text{d)}\\$
+```{r}
+pairwise.t.test(mpg.r$cty,mpg.r$trans, pool.sd = TRUE,
+p.adjust.method = "none")
+```
+soient les deux hypotheses suivantes
 
-Test de normalité
+$\text{Decision}\\$
+le p-value est inferieur a la valeur de aplha fixée ($\alpha=0.05$), donc on rejette $H_{0}$ et on accepte $H_{a}$ en prenant un risque de  $4.23\%$ de se tromper, cela montre qu'il y a une difference significative entre la .
+
+
+-**Pour la variable hwy**$\\$
+$\underline{\text{Test de normalité}}$
 
 ```{r}
 hwyaut <- mpg.r$hwy[mpg.r$trans=="auto"]
 shapiro.test(hwyaut)
 qqnorm(hwyaut)
+```
+
+Soient les deux hypoteses suivantes:$\\$
+$H_{0}:$ la variable hwy derminant la consommation sur l’autoroute par la transmission automatique est une loi normale $\\$
+$H_{a}:$ la variable hwy derminant la consommation sur l’autoroute par la transmission automatique n'est pas une loi normale $\\$
+$\text{Decision}$
+
+le p-value est inferieur a la valeur de aplha fixée ($\alpha=0.05$), donc on rejette $H_{0}$ et on accepte $H_{a}$ en prenant un risque de  $4.99\%$ de se tromper.
+
+```{r}
 hwym <- mpg.r$hwy[mpg.r$trans=="manu"]
 shapiro.test(hwym)
 qqnorm(hwym)
 ```
 
-**Exercice_2**
+Soient les deux hypoteses suivantes:$\\$
+$H_{0}:$ la variable hwy qui dermine  la consommation sur l’autoroute par la transmission manuelle est une loi normale $\\$
+$H_{a}:$ la variable hwy qui determine la consommation sur l’autoroute par la transmission manuelle n'est pas une loi normale $\\$
+$\text{Decision}$
+
+le p-value est inferieur a la valeur de aplha fixée ($\alpha=0.05$), donc on rejette $H_{0}$ et on accepte $H_{a}$ en prenant un risque de  $4.77\%$ de se tromper.
+
+$\text{test d'egalité des variances}$
+
+```{r}
+var.test(mpg.r$hwy ~ trans,data=mpg.r)
+t.test(mpg.r$hwy~trans,data=mpg.r)$conf.int # intervalle de confiance
+```
+
+Soient les deux hypoteses suivantes:$\\$
+$H_{0}:$ la variance de la variable hwy est identique entre les deux types de transmission(automatique et manuelle)$\\$
+$H_{a}:$ la variance de la variable hwy est différente entre les deux types de transmission(automatique et manuelle)$\\$
+-Decision$\\$
+le p-value est superieur a la valeur de alpha fixée ($\alpha=0.05$), donc on rejette $H_{a}$ et on accepte $H_{0}$ avec un risque de $48.75\%$ de se tromper, cela montre qu'il y a une difference significative entre les types de transmission(manuelle et automatique) sur la consommation en autouroute. 
+
+
+$\text{2.d)}$
+
+```{r}
+pairwise.t.test(mpg.r$hwy,mpg.r$trans, pool.sd = TRUE,
+p.adjust.method = "none")
+```
+
+**Exercice 2**
 
 ```{r}
 alternativef <- function(t,df,alternative){
@@ -134,7 +220,7 @@ t.test(x, y,alternative = "greater",paired = TRUE, var.equal = FALSE)
 ```
 
 
-**Exercice_3**
+**Exercice 3**
 
 
 ```{r}
@@ -172,38 +258,72 @@ g2 + theme (plot.title = element_text(size=11,face="bold",hjust = 0.5))
 
 Cette image montre le boxplot des prix de diamants en fonction de leurs groupes de clartée, les points bleus et rouges qui se trouvent sur chaque boxplot indique la mediane et la moyenne des groupes de clarté, on observe aussi des valeurs aberrantes dans chaque boxplot
 
-**Question_3**
+**Question 3**
 
 Apres avoir fait le barplot sur les prix moyens des diamants en fonction de leur clartée, on constate qu'il y a une difference significative entre le prix de diamant de clarté "IF" et les autres groupe de clarté, car le prix moyen de diamants de clarté IF est largement inferieur aux prix moyen des diamants des autres groupes de clarté.
 
-Analyse de variance
+**Question 4:analyse de variance**
 
-soient les deux hypoteses suivantes:
-
+soient les notations suivantes:
+IF, VVS1, VVS2, VS1, VS2 $\\$
+$\mu_{if}:$ le prix moyen d'un diamant de clarté "IF" $\\$
+$\mu_{vvs1}:$ le prix moyen d'un diamant de clarté "VVS1" $\\$
+$\mu_{vvs2}:$ le prix moyen d'un diamant de clarté "VVS2" $\\$
+$\mu_{vs1}:$ le prix moyen d'un diamant de clarté "VS1" $\\$ 
+$\mu_{vs2}:$ le prix moyen d'un diamant de clarté "IF" $\\$
+soient les deux hypothéses suivantes:$\\$
+$H_{0}:\mu_{if}=\mu_{vvs1}=\mu_{vvs2}=\mu_{vs1}=\mu_{vs2}\\$
+$H_{a}: \exists \ i,j\in \{if,vvs1,vvs2,vs1,vs2\}$ tels que $\mu_{i}\ne\mu_{j}$
 
 ```{r}
 An_var <- lm(Price~Clarity)
 anova(An_var)
 ```
-test de fisher
+
+$\underline{\alpha=0.01}\\$
+- Decision: $\\$
+le p-value est superieur a la valeur de alpha fixée $(\alpha=0.01)$, donc  on rejete l'hypotése $H_{a}$ et on accepte l'hypotése nulle($H_{0}$) en prenant un risque de $0.49\%$ de se tromper ce qui est quasiment faible cela montre qu'il n y a pas une difference significative entre le prix moyen des groupements de clarté.$\\$ 
+$\underline{\alpha=0.05}\\$
+- Decision: $\\$
+le p-value est inferieur a la valeur de aplha fixée $(\alpha=0.05)$, donc  on rejette $H_{0}$ et on accepte l'hypothése $H_{a}$ avec un risque de $3.5\%$ de se tromper, ce qui montre qu'il y a une dependance significative entre le prix d'un diamant et son groupe de clarté.
+
+$\textbf{Question 5}$
+
+$\underline{\text{Test de fisher}}$
 ```{r}
+pairwise.t.test(Price, Clarity, pool.sd = TRUE,
+p.adjust.method = "none")
 ```
 
-test de Tukey
+$\underline{\text{test de Tukey}}$
+
 ```{r}
 df_price_clarity.aov <- aov(Price~Clarity)
 TukeyHSD(df_price_clarity.aov)
 ```
-test de bonferroni
+
+$\underline{\text{test de Bonferroni}}$
+
 ```{r}
 pairwise.t.test(Price, Clarity, pool.sd = TRUE,
 p.adjust.method = "bonf")
 ```
 
-test de Barlette
+Apres avoir fait les trois tests on constate que le test de fisher et de Tukey donnent des p-value quasi-identiques,par contre le test de bonferonni donne des pvalue qui sont differentes aux deux premiers tests, ce qui montre l'apparition des regroupements differentes.
+Cette difference s'explique le fait que la methode de fisher et Tukey testent l'egalité de deux variances et la methode de bonferroni teste l'egalité de deux moyennes, la methode de bonferonni donne le regroupement le plus grossier, car elle retourne plusieurs p-value qui sont egal a $1$ dans ces cas on ne peut pas accepter l'hypothése d'egalité des moyennes avec un risque de  $95\%$ qui est trés elevé .
+
+$\textbf{Question 6}$
+
+Oui il y a une coherence entre le test de fisher dans la question 4 et les comparaisons multiples avec la question 3 car dans tous les tests on observe sur certains regroupement un pvalue inferieur a $0.01$ ou a $0.05$ ce qui explique la  difference significative entre les prix de diamant et leur clarté.
+
+$\textbf{Question 7}\\$
+D'apres le diagramme en baton representant le prix moyen des diamants en fonction de leur groupe de clarté on constate que les prix moyens de diamants sont differents donc on rejete l'hypothese de normalité des prix, dans certains cas le test de fisher donne un p-value superieur a $0.05$ donc l’hypothèse des variances égale d’un groupe à l’autre peut etre accepté.
+
+$\underline{\text{Test de Bartlett}}$
   
 ```{r}
 bartlett.test(Price ~ Clarity, data = df_price_clarity)
+boxplot(Price~Clarity)
 ```
-  
 
+le test de bartlett donne un p-value de $0.6407$ qui est largement superieur a $0.05$ donc on accepte l'hypothése d'egalité des variances avec un risque de $59.07\%$ de se tromper.
