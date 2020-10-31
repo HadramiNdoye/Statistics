@@ -273,8 +273,9 @@ born_sup <-matrix(rep(0,N),nrow = N,ncol=length(n))
     born_inf[,i] <- Est_Moment(n[i],N,theta) - qnorm(1-(alpha/2))/(sqrt(n[i]*18))
     born_sup[,i] <- Est_Moment(n[i],N,theta) + qnorm(1-(alpha/2))/(sqrt(n[i]*18))
   }
-  born_inf[1][1]
-  born_sup[1][1]
+# les 5 premiers bornes inferieurs de l'intervalle de confiance pour chaque échantilon
+  born_inf[1:5] 
+  born_sup[1:5]
   t.test(Est_Moment(n,N,theta))$conf.int
 ```
 
